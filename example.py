@@ -14,6 +14,9 @@ with st.sidebar:
         force_anchor = "anchor2"
     scroll_navigation(anchor_ids=anchor_ids, force_anchor=force_anchor)
 
+scroll_navigation(anchor_ids=even_anchor_ids,
+                  key="Othernavbar" ,
+                  anchor_labels=["Apple", "Orange", "Banana", "Watermelon", "Grape", "Strawberry"], orientation="horizontal")
 lorem_ipsum = """
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 

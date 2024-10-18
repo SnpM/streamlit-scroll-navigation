@@ -93,17 +93,17 @@
     }
 
     private getCleanedArgs() {
-      let { anchor_ids, anchor_labels, anchor_icons, force_anchor, key} = this.props.args;
+      let { key, anchor_ids, anchor_labels, anchor_icons, force_anchor, orientation} = this.props.args;
+      //key is required
+      if (key == null || typeof key !== "string") {
+        throw new Error("Invalid key: key must be a string.");
+      }
 
       // anchor_ids is required
       if (anchor_ids == null || !Array.isArray(anchor_ids) || !anchor_ids.every((a) => typeof a === "string")) {
         throw new Error("Invalid anchors: anchors must be a list of strings.");
       }
 
-      //key is required
-      if (key == null || typeof key !== "string") {
-        throw new Error("Invalid key: key must be a string.");
-      }
 
       // anchor_labels is an optional list
       if (anchor_labels == null) {
@@ -130,15 +130,28 @@
       if (force_anchor != null && typeof force_anchor !== "string") {
         throw new Error("Invalid force_anchor: force_anchor must be a string.");
       }
-      return { anchor_ids, anchor_labels, anchor_icons, force_anchor, key};
+
+      //orientation is an optional string. If not provided, default to "vertical"
+      //If provided, it must be "vertical" or "horizontal"
+      if (orientation == null) {
+        orientation = "vertical";
+      } else {
+        if (orientation !== "vertical" && orientation !== "horizontal") {
+          throw new Error("Invalid orientation: orientation must be 'vertical' or 'horizontal'.");
+        }
+      }
+
+      return { anchor_ids, anchor_labels, anchor_icons, force_anchor, key, orientation };
     }
 
     // Render menu items dynamically based on props from Streamlit
     public renderMenuItems = (): ReactNode => {
-      const { activeAnchorId: activeAnchorId } = this.state;
-
-      const { anchor_ids, anchor_labels = anchor_ids, anchor_icons, force_anchor } = this.getCleanedArgs();
-
+      const { activeAnchorId } = this.state;
+      const { anchor_ids, anchor_labels, anchor_icons, orientation } = this.getCleanedArgs();
+    
+      // Determine if orientation is horizontal or vertical
+      const isHorizontal = orientation === "horizontal";
+    
       return anchor_ids.map((anchor_id: string, index: number) => (
         <div
           key={anchor_id}
@@ -146,30 +159,40 @@
           style={{
             display: "flex",
             alignItems: "center",
+            flexDirection: isHorizontal ? "row" : "column", // Handle layout direction
+            justifyContent: isHorizontal ? "center" : "flex-start", // Adjust alignment for horizontal
             padding: "15px 20px",
             backgroundColor: activeAnchorId === anchor_id ? "#4A4A4A" : "transparent",
             color: activeAnchorId === anchor_id ? "#fff" : "#FFD700",
             cursor: "pointer",
             fontWeight: activeAnchorId === anchor_id ? "bold" : "normal",
             borderRadius: "8px",
-            marginBottom: "10px"
+            margin: isHorizontal ? "0 10px" : "10px 0", // Adjust margin based on orientation
+            textAlign: "center"
           }}
         >
           {/* Render Bootstrap icon if provided */}
           {anchor_icons && anchor_icons[index] && (
-            <i className={`bi ${anchor_icons[index]}`} style={{ marginRight: "10px", fontSize: "18px" }}></i>
+            <i className={`bi ${anchor_icons[index]}`} style={{ marginRight: isHorizontal ? "10px" : "0px", fontSize: "18px" }}></i>
           )}
           <span>{anchor_labels[index]}</span>
         </div>
       ));
     };
-
-    // Render sidebar
+    
+    // Render sidebar with dynamic orientation handling
     public render = (): ReactNode => {
+      const { orientation } = this.getCleanedArgs();
+    
+      // Adjust layout direction based on orientation
+      const isHorizontal = orientation === "horizontal";
+    
       return (
-        <div style={styles.sidebarContainer}>
+        <div style={{ ...styles.sidebarContainer, flexDirection: isHorizontal ? "row" : "column" }}>
           <div style={styles.menuTitle}>Menu</div>
-          <div>{this.renderMenuItems()}</div>
+          <div style={{ display: "flex", flexDirection: isHorizontal ? "row" : "column" }}>
+            {this.renderMenuItems()}
+          </div>
         </div>
       );
     };

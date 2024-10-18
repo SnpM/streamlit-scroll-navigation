@@ -59,6 +59,7 @@ def inject_crossorigin_interface():
         width=0,
     )
 def instantiate_crossorigin_interface(key):
+    
     components.html(
         f"""
         <script>
@@ -81,14 +82,17 @@ def scroll_navigation(
     anchor_icons:Collection[str]=None,
     anchor_labels:Collection[str]=None,
     force_anchor:str=None,
+    orientation:Literal['vertical','horizontal']='vertical',
     ):
     inject_crossorigin_interface()
+    instantiate_crossorigin_interface(key)
     component_value = _component_func(
         anchor_ids=anchor_ids,
         key=key,
         anchor_icons=anchor_icons,
         anchor_labels=anchor_labels,
         force_anchor=force_anchor,
+        orientation=orientation,
     )
 
     # We could modify the value returned from the component if we wanted.

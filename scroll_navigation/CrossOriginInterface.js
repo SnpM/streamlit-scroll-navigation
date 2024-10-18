@@ -131,17 +131,19 @@ class CrossOriginInterface {
         
     handleMessage(event) {
         const { COI_method, key} = event.data;
-
+        
         //If method is undefined, it is not a message from the iframe
         if (!COI_method) {
             //Ignore messages from other sources
             return;
         }
+        console.debug("COI message", key, "mine: ", this.key, event.data);
 
         if (key !== this.key) {
             //Ignore messages from other CrossOriginInterface instances
             return;
         } 
+        console.debug("COI with key", key, "received message", event.data);
 
         //If component is not registered, only allow registration method
         if (this.component === null) {
@@ -177,4 +179,3 @@ class CrossOriginInterface {
 function instantiateCrossOriginInterface(key) {
     return new CrossOriginInterface(key);
 }
-instantiateCrossOriginInterface('scroll_navigation_default')
