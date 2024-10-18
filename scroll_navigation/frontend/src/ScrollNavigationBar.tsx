@@ -10,36 +10,31 @@
     activeAnchorId: string;
   }
 
-
-
-
-
   class ScrollNavigationBar extends StreamlitComponentBase<State> {
+    public state = { activeAnchorId: "" };
 
-    public state = { activeAnchorId: "" }; 
-
-    postMessage(COI_method:string, data?:{anchor_id?:string, anchor_ids?:string[]}) {
-      const {key} = this.props.args;
+    postMessage(COI_method: string, data?: { anchor_id?: string; anchor_ids?: string[] }) {
+      const { key } = this.props.args;
       if (key == null || typeof key !== "string") {
         throw new Error("Invalid key: key must be a string.");
       }
 
-      const {anchor_id, anchor_ids} = data || {};
+      const { anchor_id, anchor_ids } = data || {};
       window.parent.postMessage({ COI_method, key, anchor_id, anchor_ids }, "*");
     }
-    
+
     postScroll(anchor_id: string): void {
-      this.postMessage("scroll", {anchor_id});
+      this.postMessage("scroll", { anchor_id });
       console.log("postScroll", anchor_id);
     }
     postRegister(): void {
       this.postMessage("register");
     }
-    postTrackAnchors(anchor_ids:string[]): void {
-      this.postMessage("trackAnchors", {anchor_ids});
+    postTrackAnchors(anchor_ids: string[]): void {
+      this.postMessage("trackAnchors", { anchor_ids });
     }
-    postUpdateActiveAnchor(anchor_id:string): void {
-      this.postMessage("updateActiveAnchor", {anchor_id});
+    postUpdateActiveAnchor(anchor_id: string): void {
+      this.postMessage("updateActiveAnchor", { anchor_id });
     }
 
     // Handle menu item click
@@ -63,19 +58,17 @@
     componentDidUpdate(): void {
       super.componentDidUpdate();
       const { anchor_ids, force_anchor } = this.getCleanedArgs();
-        if (force_anchor != undefined) {
-          if (anchor_ids.includes(force_anchor)) {
+      if (force_anchor != undefined) {
+        if (anchor_ids.includes(force_anchor)) {
           this.handleMenuClick(force_anchor);
-        }
-        else {
+        } else {
           throw new Error("Invalid force_anchor: force_anchor must be one of the anchor_ids.");
         }
       }
     }
-   
 
     private handleMessage(event: MessageEvent) {
-      const {COMPONENT_method, key} = event.data;
+      const { COMPONENT_method, key } = event.data;
       if (COMPONENT_method == null || key == null) {
         return;
       }
@@ -93,7 +86,7 @@
     }
 
     private getCleanedArgs() {
-      let { key, anchor_ids, anchor_labels, anchor_icons, force_anchor, orientation} = this.props.args;
+      let { key, anchor_ids, anchor_labels, anchor_icons, force_anchor, orientation } = this.props.args;
       //key is required
       if (key == null || typeof key !== "string") {
         throw new Error("Invalid key: key must be a string.");
@@ -104,12 +97,10 @@
         throw new Error("Invalid anchors: anchors must be a list of strings.");
       }
 
-
       // anchor_labels is an optional list
       if (anchor_labels == null) {
         anchor_labels = anchor_ids;
-      }
-      else {
+      } else {
         if (!Array.isArray(anchor_labels) || !anchor_labels.every((a) => typeof a === "string")) {
           throw new Error("Invalid anchor_labels: anchor_labels must be a list of strings.");
         }
@@ -119,9 +110,8 @@
       if (anchor_icons == null) {
         // List of null icons
         anchor_icons = new Array(anchor_ids.length).fill(null);
-      }
-      else {
-        if ((!Array.isArray(anchor_icons) || !anchor_icons.every((a) => typeof a === "string"))) {
+      } else {
+        if (!Array.isArray(anchor_icons) || !anchor_icons.every((a) => typeof a === "string")) {
           throw new Error("Invalid anchor_icons: anchor_icons must be a list of strings.");
         }
       }
@@ -148,17 +138,16 @@
     public renderMenuItems = (): ReactNode => {
       const { activeAnchorId } = this.state;
       const { anchor_ids, anchor_labels, anchor_icons, orientation } = this.getCleanedArgs();
-    
+
       // Determine if orientation is horizontal or vertical
       const isHorizontal = orientation === "horizontal";
-    
+
       return anchor_ids.map((anchor_id: string, index: number) => (
         <div
           key={anchor_id}
           onClick={() => this.handleMenuClick(anchor_id)}
           style={{
             display: "flex",
-            alignItems: "center",
             flexDirection: isHorizontal ? "row" : "column", // Handle layout direction
             justifyContent: isHorizontal ? "center" : "flex-start", // Adjust alignment for horizontal
             padding: "15px 20px",
@@ -167,8 +156,18 @@
             cursor: "pointer",
             fontWeight: activeAnchorId === anchor_id ? "bold" : "normal",
             borderRadius: "8px",
-            margin: isHorizontal ? "0 10px" : "10px 0", // Adjust margin based on orientation
-            textAlign: "center"
+            margin: isHorizontal ? "0 5px" : "2px 0", // Adjust margin based on orientation
+            textAlign: "center",
+            width: "100%", // Take full width in vertical mode
+            transition: "background-color 0.3s, color 0.3s", // Smooth transition for hover effect
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLElement).style.backgroundColor = "#555";
+            (e.currentTarget as HTMLElement).style.color = "#fff";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLElement).style.backgroundColor = activeAnchorId === anchor_id ? "#4A4A4A" : "transparent";
+            (e.currentTarget as HTMLElement).style.color = activeAnchorId === anchor_id ? "#fff" : "#FFD700";
           }}
         >
           {/* Render Bootstrap icon if provided */}
@@ -177,21 +176,29 @@
           )}
           <span>{anchor_labels[index]}</span>
         </div>
-      ));
+      )
+    );
     };
-    
+
     // Render sidebar with dynamic orientation handling
     public render = (): ReactNode => {
       const { orientation } = this.getCleanedArgs();
-    
+
       // Adjust layout direction based on orientation
       const isHorizontal = orientation === "horizontal";
-    
+
       return (
-        <div style={{ ...styles.sidebarContainer, flexDirection: isHorizontal ? "row" : "column" }}>
-          <div style={styles.menuTitle}>Menu</div>
-          <div style={{ display: "flex", flexDirection: isHorizontal ? "row" : "column" }}>
-            {this.renderMenuItems()}
+        <div style={{
+          ...styles.sidebarContainer,
+          flexDirection: isHorizontal ? "row" : "column",
+          width: isHorizontal ? "100vw" : "250px", // Full width for horizontal, fixed for vertical
+          height: isHorizontal ? "auto" : "100vh", // Auto height for horizontal, full for vertical
+          //boxSizing: "border-box", // Ensure the padding is included in the total width/height
+          //overflowY: "auto" // Ensure overflow is handled properly in case of many buttons
+        }}>
+          {/* <div style={styles.menuTitle}></div> */}
+          <div style={{ display: "flex", flexDirection: isHorizontal ? "row" : "column", width: "100%" }}>
+          {this.renderMenuItems()}
           </div>
         </div>
       );
@@ -202,11 +209,14 @@
   const styles = {
     sidebarContainer: {
       backgroundColor: "#333",
-      height: "100vh",
-      padding: "20px",
+      padding: "10px",
+      paddingTop: "17px", //Not sure why this is needed to make consistent padding
       color: "#fff",
       fontFamily: "Arial, sans-serif",
-      width: "250px"
+      display: "flex",
+      justifyContent: "center", // Center content horizontally
+      borderRadius: "15px", // Add curved corners
+      // Width and height now dynamically adjusted in render
     },
     menuTitle: {
       fontSize: "18px",

@@ -40,13 +40,16 @@ else:
     parent_dir = os.path.dirname(os.path.abspath(__file__))
     build_dir = os.path.join(parent_dir, "frontend/build")
     _component_func = components.declare_component(COMPONENT_NAME, path=build_dir)
+    
 def inject_crossorigin_interface():
     interface_script_path = os.path.join(script_directory, "CrossOriginInterface.js")
     content = open(interface_script_path).read()
+    # Run bootloader script in parent and hide div
     components.html(
         f"""
         <script>
-        if (!window.parent.COI_injected) {{
+            frameElement.parentElement.style.display = 'none';
+            if (!window.parent.COI_injected) {{
             window.parent.COI_injected = true;
             var script = window.parent.document.createElement('script');
             script.text = `{content}`;
@@ -59,10 +62,11 @@ def inject_crossorigin_interface():
         width=0,
     )
 def instantiate_crossorigin_interface(key):
-    
+    # Instantiate a COI object in the parent frame and hide div
     components.html(
         f"""
         <script>
+        frameElement.parentElement.style.display = 'none';
         window.parent.instantiateCrossOriginInterface('{key}');
         </script>
         """,
