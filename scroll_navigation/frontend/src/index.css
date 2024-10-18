@@ -1,0 +1,32 @@
+.anchor-menu {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+  }
+  
+  .menu-item {
+    padding: 10px;
+    text-decoration: none;
+    font-size: 16px;
+    color: #333;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+  }
+  
+  .menu-item i {
+    margin-right: 8px;
+  }
+  
+  .menu-item:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .menu-item.active {
+    background-color: #ff4b4b;
+    color: white;
+    border: 1px solid #ff4b4b;
+  }
