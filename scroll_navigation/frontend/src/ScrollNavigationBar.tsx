@@ -14,7 +14,7 @@
 
 
 
-  class SidebarMenu extends StreamlitComponentBase<State> {
+  class ScrollNavigationBar extends StreamlitComponentBase<State> {
 
     public state = { activeAnchorId: "" }; 
 
@@ -215,4 +215,4 @@
     }
   };
 
-  export default withStreamlitConnection(SidebarMenu);
+  export default withStreamlitConnection(ScrollNavigationBar);

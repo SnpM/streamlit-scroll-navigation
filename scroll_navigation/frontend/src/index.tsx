@@ -1,10 +1,11 @@
 import React from "react"
 import ReactDOM from "react-dom"
-import MyComponent from "./MyComponent"
+import MyComponent from "./ScrollNavigationBar"
+import ScrollNavigationBar from "./ScrollNavigationBar"
 
 ReactDOM.render(
   <React.StrictMode>
-    <MyComponent />
+    <ScrollNavigationBar />
   </React.StrictMode>,
   document.getElementById("root")
 )

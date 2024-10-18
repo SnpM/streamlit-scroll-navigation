@@ -20,7 +20,7 @@ _RELEASE = False
 # your component frontend. Everything else we do in this file is simply a
 # best practice.
 
-COMPONENT_NAME="scroll_navigation"
+COMPONENT_NAME="ScrollNavigationBar"
 
 if not _RELEASE:
     _component_func = components.declare_component(
