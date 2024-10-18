@@ -2,9 +2,11 @@ import streamlit as st
 from scroll_navigation import scroll_navigation
 
 
-anchor_ids = ["anchor1", "anchor2", "anchor3", "anchor4"]
-
-
+anchor_ids = ["anchor1", "anchor2", "anchor3", "anchor4", "anchor5"]
+for i in range(6, 11):
+    anchor_ids.append(f"anchor{i}")
+    
+even_anchor_ids = anchor_ids[::2]
 
 with st.sidebar:
     force_anchor = None
