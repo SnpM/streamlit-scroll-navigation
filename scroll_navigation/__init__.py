@@ -40,17 +40,29 @@ else:
     parent_dir = os.path.dirname(os.path.abspath(__file__))
     build_dir = os.path.join(parent_dir, "frontend/build")
     _component_func = components.declare_component(COMPONENT_NAME, path=build_dir)
-
 def inject_crossorigin_interface():
     interface_script_path = os.path.join(script_directory, "CrossOriginInterface.js")
     content = open(interface_script_path).read()
     components.html(
         f"""
         <script>
-        var script = window.parent.document.createElement('script');
-        script.text = `{content}`;
-        script.type = 'text/javascript';
-        window.parent.document.head.appendChild(script);
+        if (!window.parent.COI_injected) {{
+            window.parent.COI_injected = true;
+            var script = window.parent.document.createElement('script');
+            script.text = `{content}`;
+            script.type = 'text/javascript';
+            window.parent.document.head.appendChild(script);
+        }}
+        </script>
+        """,
+        height=0,
+        width=0,
+    )
+def instantiate_crossorigin_interface(key):
+    components.html(
+        f"""
+        <script>
+        window.parent.instantiateCrossOriginInterface('{key}');
         </script>
         """,
         height=0,
@@ -65,7 +77,7 @@ from typing import *
 # output value, and add a docstring for users.
 def scroll_navigation(
     anchor_ids:Collection[str],
-    current_anchor:str=None,
+    key:str='scroll_navigation_default',
     anchor_icons:Collection[str]=None,
     anchor_labels:Collection[str]=None,
     force_anchor:str=None,
@@ -73,7 +85,7 @@ def scroll_navigation(
     inject_crossorigin_interface()
     component_value = _component_func(
         anchor_ids=anchor_ids,
-        current_anchor=current_anchor,
+        key=key,
         anchor_icons=anchor_icons,
         anchor_labels=anchor_labels,
         force_anchor=force_anchor,

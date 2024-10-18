@@ -1,136 +1,180 @@
-function scroll(anchorId) {
-    const element = document.getElementById(anchorId);
-    console.log('Scrolling to', anchorId); 
-    if (element) {
-        element.scrollIntoView({ behavior: 'smooth' , block: 'start'});
+class CrossOriginInterface {
+    static instances = {};
+    
+    constructor(key) {
+        if (CrossOriginInterface.instances[key]) {
+            console.error('CrossOriginInterface instance already exists with key', key);
+            return CrossOriginInterface.instances[key];
+        }
+        CrossOriginInterface.instances[key] = this;
+
+        //Anchors are sorted in the order they appear in the document
+        this.sortedAnchors = [];
+        this.trackedAnchors = new Set();
+        this.anchorVisibleStates = {};
+        this.activeAnchorId = null;
+        this.component = null;
+        this.key = key;
+        window.addEventListener("message", this.handleMessage.bind(this));
+
     }
-}
 
-//Anchors are sorted in the order they appear in the document
-const sortedAnchors = [];
-const trackedAnchors = new Set();
-const anchorVisibleStates = {}
-let activeAnchorId = null;
-
-function checkBestAnchor(){
-    if (activeAnchorId) {
-        if (anchorVisibleStates[activeAnchorId]) {
-            return;
+    scroll(anchorId) {
+        const element = document.getElementById(anchorId);
+        console.log('Scrolling to', anchorId); 
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' , block: 'start'});
         }
-        let newActiveAnchorId = null;
+    }
 
-        const activeAnchorIndex = sortedAnchors.indexOf(activeAnchorId);
+    updateActiveAnchor(anchorId) {
+        if (this.trackedAnchors.has(anchorId)) {
+            this.activeAnchorId = anchorId;
+            console.debug('Updated active anchor', anchorId);
+        }
+        else {
+            console.error('Anchor is not being tracked', anchorId ?? 'null');
+        }
+    }
 
-        // If anchor dissapeared above screen, find the next anchor below that is visible. 
-        for (let i = activeAnchorIndex + 1; i < sortedAnchors.length; i++) {
-            const anchorId = sortedAnchors[i];
-            if (anchorVisibleStates[anchorId]) {
-                newActiveAnchorId = anchorId;
-                break;
+    checkBestAnchor(){
+        if (this.activeAnchorId) {
+            if (this.anchorVisibleStates[this.activeAnchorId]) {
+                return;
             }
-        }
-        if (newActiveAnchorId === null) {
-            // If anchor dissapeared below screen, find the next anchor above that is visible.
-            for (let i = activeAnchorIndex - 1; i >= 0; i--) {
-                const anchorId = sortedAnchors[i];
-                if (anchorVisibleStates[anchorId]) {
+            let newActiveAnchorId = null;
+
+            const activeAnchorIndex = this.sortedAnchors.indexOf(this.activeAnchorId);
+
+            // If anchor dissapeared above screen, find the next anchor below that is visible. 
+            for (let i = activeAnchorIndex + 1; i < this.sortedAnchors.length; i++) {
+                const anchorId = this.sortedAnchors[i];
+                if (this.anchorVisibleStates[anchorId]) {
                     newActiveAnchorId = anchorId;
                     break;
                 }
             }
-        }
-        console.log("flag1")
-        if (newActiveAnchorId !== null) {
-            activeAnchorId = newActiveAnchorId;
-            // Send a message to iframe to update the active anchor
-            postMessageToClients({ method: 'updateActiveAnchor', anchor_id: activeAnchorId });
-            console.log('Sent new active anchor', activeAnchorId);
-        }
-    }
-}
-
-function postMessageToClients(message) {
-    clients.forEach(client => {
-        client.postMessage(message, "*");
-    });
-}
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        const anchorId = entry.target.id;
-        if (entry.isIntersecting) {
-            anchorVisibleStates[anchorId] = true;
-        } else {
-            anchorVisibleStates[anchorId] = false;
-            // If the invisible anchor is the active anchor, find a new active anchor
-            if (activeAnchorId === anchorId) {
-                checkBestAnchor();
+            if (newActiveAnchorId === null) {
+                // If anchor dissapeared below screen, find the next anchor above that is visible.
+                for (let i = activeAnchorIndex - 1; i >= 0; i--) {
+                    const anchorId = this.sortedAnchors[i];
+                    if (this.anchorVisibleStates[anchorId]) {
+                        newActiveAnchorId = anchorId;
+                        break;
+                    }
+                }
+            }
+            if (newActiveAnchorId !== null) {
+                this.activeAnchorId = newActiveAnchorId;
+                // Send a message to iframe to update the active anchor on component
+                this.postMessage('updateActiveAnchor', this.activeAnchorId);
+                console.log('Sent new active anchor', this.activeAnchorId);
             }
         }
-    });
-}, { threshold: [0, 1] });
-
-function trackAnchor(anchorId) {
-    if (trackedAnchors.has(anchorId)) {
-        console.log('Anchor is already being tracked', anchorId);
-        return;
     }
-    
-    const anchor = document.getElementById(anchorId);
 
-    if (!anchor) {
-        console.error('Anchor does not exist', anchorId);
-        return
+    postMessage(COMPONENT_method, anchor_id) {
+        if (this.component === null) {
+            console.error('Component has not been registered');
+            return;
+        }
+        this.component.postMessage({ COMPONENT_method: COMPONENT_method, key: this.key, anchor_id }, '*');
     }
-    trackedAnchors.add(anchorId);
 
-    //Insert anchor into sortedAnchors based on its position in the document
-    let inserted = false;
-    for (let i = 0; i < sortedAnchors.length; i++) {
-        const currentAnchor = document.getElementBy(    if (!anchor) {tPosition(currentAnchor) & Node.DOCUMENT_POSITION_FOLLOWING) {
-            sortedAnchors.splice(i, 0, anchorId);
-            inserted = true;
-            break;
+    observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const anchorId = entry.target.id;
+            if (entry.isIntersecting) {
+                this.anchorVisibleStates[anchorId] = true;
+            } else {
+                this.anchorVisibleStates[anchorId] = false;
+                // If the invisible anchor is the active anchor, find a new active anchor
+                if (this.activeAnchorId === anchorId) {
+                    this.checkBestAnchor();
+                }
+            }
+        });
+    }, { threshold: [0, 1] });
+
+    trackAnchors(anchor_ids) {
+        for (const anchorId of anchor_ids) {
+            if (this.trackedAnchors.has(anchorId)) {
+                console.log('Anchor is already being tracked', anchorId);
+                return;
+            }
+            
+            const anchor = document.getElementById(anchorId);
+
+            if (!anchor) {
+                console.error('Anchor does not exist', anchorId);
+                return
+            }
+            this.trackedAnchors.add(anchorId);
+
+            //Insert anchor into sortedAnchors based on its position in the document
+            let inserted = false;
+            for (let i = 0; i < this.sortedAnchors.length; i++) {
+                const currentAnchor = document.getElementById(this.sortedAnchors[i]);
+                if (anchor.compareDocumentPosition(currentAnchor) & Node.DOCUMENT_POSITION_FOLLOWING) {
+                    this.sortedAnchors.splice(i, 0, anchorId);
+                    inserted = true;
+                    break;
+                }
+            }
+            this.sortedAnchors.push(anchorId);
+            this.sortedAnchors.push(anchorId);
+            
+            this.observer.observe(anchor);
+            console.log('Started tracking anchor', anchorId);
         }
     }
-    if (!inserted) {
-        sortedAnchors.push(anchorId);
+        
+    handleMessage(event) {
+        const { COI_method, key} = event.data;
+
+        //If method is undefined, it is not a message from the iframe
+        if (!COI_method) {
+            //Ignore messages from other sources
+            return;
+        }
+
+        if (key !== this.key) {
+            //Ignore messages from other CrossOriginInterface instances
+            return;
+        } 
+
+        //If component is not registered, only allow registration method
+        if (this.component === null) {
+            if (COI_method === 'register') {
+                this.component = event.source;
+            }
+            else {
+                console.error('Must register component with this CrossOriginInterface before calling other methods');
+            }
+        }
+
+        switch (COI_method) {
+            case 'scroll':
+                const { anchor_id: scrollAnchorId } = event.data;
+                this.scroll(scrollAnchorId);
+                break;
+            case 'register':
+                console.error('Register can only be called once.');
+                break;
+            case 'trackAnchors':
+                const { anchor_ids } = event.data;
+                this.trackAnchors(anchor_ids);
+                break;
+            case 'updateActiveAnchor':
+                const { anchor_id: updateAnchorId } = event.data;
+                this.updateActiveAnchor(updateAnchorId);
+            break;
+                default:
+                console.error('Unknown method', COI_method);
+        }
     }
-    
-    observer.observe(anchor);
-    console.log('Started tracking anchor', anchorId);
 }
-
-let updateActiveAnchorAcc = 0;
-function updateActiveAnchor(anchor_id) {
-    activeAnchorId = anchor_id;
+function instantiateCrossOriginInterface(key) {
+    return new CrossOriginInterface(key);
 }
-
-const clients = [];
-
-window.addEventListener("message", (event) => {
-    const { method } = event.data;
-    //If method is undefined, it is not a message from the iframe
-    if (!method) {
-        return;
-    }
-
-    if (method === 'scroll') {
-        const { anchor_id } = event.data;
-        scroll(anchor_id);
-    }
-    else if (method === 'register') {
-        clients.push(event.source);
-    }
-    else if (method === 'trackAnchors') {
-        const { anchor_ids } = event.data;
-        anchor_ids.forEach(trackAnchor);
-    }
-    else if (method === 'updateActiveAnchor') {
-        const { anchor_id } = event.data;
-        updateActiveAnchor(anchor_id);
-    }
-    else {
-        console.error('Unknown method', method);
-    }
-});
+instantiateCrossOriginInterface('scroll_navigation_default')

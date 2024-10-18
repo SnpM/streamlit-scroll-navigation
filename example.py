@@ -4,8 +4,13 @@ from scroll_navigation import scroll_navigation
 
 anchor_ids = ["anchor1", "anchor2", "anchor3", "anchor4"]
 
+
+
 with st.sidebar:
-    scroll_navigation(anchor_ids=anchor_ids)
+    force_anchor = None
+    if st.button("Force Anchor 2"):
+        force_anchor = "anchor2"
+    scroll_navigation(anchor_ids=anchor_ids, force_anchor=force_anchor)
 
 lorem_ipsum = """
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 

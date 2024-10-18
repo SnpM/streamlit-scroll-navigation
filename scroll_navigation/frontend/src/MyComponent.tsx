@@ -10,19 +10,7 @@ interface State {
   activeAnchorId: string;
 }
 
-function postMessageScroll(anchorId: string): void {
-  console.log("postMessageScroll", anchorId);
-  window.parent.postMessage({ method: "scroll", anchor_id: anchorId }, "*");
-}
-function postMessageRegister(): void {
-  window.parent.postMessage({ method: "register" }, "*");
-}
-function postMessageTrackAnchors(anchor_ids: string[]): void {
-  window.parent.postMessage({ method: "trackAnchors", anchor_ids: anchor_ids }, "*");
-}
-function postMessageUpdateActiveAnchor(anchorId: string): void {
-  window.parent.postMessage({ method: "updateActiveAnchor", anchor_id: anchorId }, "*");
-}
+
 
 
 
@@ -30,27 +18,58 @@ class SidebarMenu extends StreamlitComponentBase<State> {
 
   public state = { activeAnchorId: "" }; 
 
+  postMessage(COI_method:string, data?:{anchor_id?:string, anchor_ids?:string[]}) {
+    const {key} = this.props.args;
+    if (key == null || typeof key !== "string") {
+      throw new Error("Invalid key: key must be a string.");
+    }
+
+    const {anchor_id, anchor_ids} = data || {};
+    window.parent.postMessage({ COI_method, key, anchor_id, anchor_ids }, "*");
+  }
+  
+  postScroll(anchor_id: string): void {
+    this.postMessage("scroll", {anchor_id});
+    console.log("postScroll", anchor_id);
+  }
+  postRegister(): void {
+    this.postMessage("register");
+  }
+  postTrackAnchors(anchor_ids:string[]): void {
+    this.postMessage("trackAnchors", {anchor_ids});
+  }
+  postUpdateActiveAnchor(anchor_id:string): void {
+    this.postMessage("updateActiveAnchor", {anchor_id});
+  }
+
   // Handle menu item click
   private handleMenuClick = (anchorId: string) => {
     this.setState({ activeAnchorId: anchorId });
-    postMessageScroll(anchorId);
-    postMessageUpdateActiveAnchor(anchorId);
+    this.postScroll(anchorId);
+    this.postUpdateActiveAnchor(anchorId);
     Streamlit.setComponentValue(anchorId);
   };
 
   public componentDidMount(): void {
     const { anchor_ids, force_anchor } = this.getCleanedArgs();
-    if (this.state.activeAnchorId === "") {
-      this.setState({ activeAnchorId: anchor_ids[0] });
-    }
-    postMessageRegister();
-    postMessageTrackAnchors(anchor_ids);
-    postMessageUpdateActiveAnchor(this.state.activeAnchorId);
+    this.postRegister();
+    this.postTrackAnchors(anchor_ids);
+
+    this.setState({ activeAnchorId: anchor_ids[0] });
+    this.postUpdateActiveAnchor(anchor_ids[0]);
     window.addEventListener("message", this.handleMessage.bind(this));
   }
   private handleMessage(event: MessageEvent) {
-    const {method} = event.data;
-    if (method === "updateActiveAnchor") {
+    const {COMPONENT_method, key} = event.data;
+    if (COMPONENT_method == null || key == null) {
+      return;
+    }
+    if (key !== this.props.args.key) {
+      return;
+    }
+
+    console.log("handleMessage", event.data);
+    if (COMPONENT_method === "updateActiveAnchor") {
       const { anchor_id } = event.data;
       if (anchor_id && typeof anchor_id === "string") {
         this.setState({ activeAnchorId: anchor_id });
@@ -59,11 +78,16 @@ class SidebarMenu extends StreamlitComponentBase<State> {
   }
 
   private getCleanedArgs() {
-    let { anchor_ids, anchor_labels, anchor_icons, force_anchor } = this.props.args;
+    let { anchor_ids, anchor_labels, anchor_icons, force_anchor, key} = this.props.args;
 
     // anchor_ids is required
     if (anchor_ids == null || !Array.isArray(anchor_ids) || !anchor_ids.every((a) => typeof a === "string")) {
       throw new Error("Invalid anchors: anchors must be a list of strings.");
+    }
+
+    //key is required
+    if (key == null || typeof key !== "string") {
+      throw new Error("Invalid key: key must be a string.");
     }
 
     // anchor_labels is an optional list
@@ -91,7 +115,7 @@ class SidebarMenu extends StreamlitComponentBase<State> {
     if (force_anchor != null && typeof force_anchor !== "string") {
       throw new Error("Invalid force_anchor: force_anchor must be a string.");
     }
-    return { anchor_ids, anchor_labels, anchor_icons, force_anchor };
+    return { anchor_ids, anchor_labels, anchor_icons, force_anchor, key};
   }
 
   // Render menu items dynamically based on props from Streamlit
