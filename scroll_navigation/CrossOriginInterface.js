@@ -21,7 +21,7 @@ class CrossOriginInterface {
 
     scroll(anchorId) {
         const element = document.getElementById(anchorId);
-        console.log('Scrolling to', anchorId); 
+        console.debug('Scrolling to', anchorId); 
         if (element) {
             element.scrollIntoView({ behavior: 'smooth' , block: 'start'});
         }
@@ -68,7 +68,7 @@ class CrossOriginInterface {
                 this.activeAnchorId = newActiveAnchorId;
                 // Send a message to iframe to update the active anchor on component
                 this.postMessage('updateActiveAnchor', this.activeAnchorId);
-                console.log('Sent new active anchor', this.activeAnchorId);
+                console.debug('Sent new active anchor', this.activeAnchorId);
             }
         }
     }
@@ -99,7 +99,7 @@ class CrossOriginInterface {
     trackAnchors(anchor_ids) {
         for (const anchorId of anchor_ids) {
             if (this.trackedAnchors.has(anchorId)) {
-                console.log('Anchor is already being tracked', anchorId);
+                console.debug('Anchor is already being tracked', anchorId);
                 return;
             }
             
@@ -125,7 +125,7 @@ class CrossOriginInterface {
             this.sortedAnchors.push(anchorId);
             
             this.observer.observe(anchor);
-            console.log('Started tracking anchor', anchorId);
+            console.debug('Started tracking anchor', anchorId);
         }
     }
         

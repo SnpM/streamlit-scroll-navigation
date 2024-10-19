@@ -38,6 +38,7 @@ else:
 def inject_crossorigin_interface():
     interface_script_path = os.path.join(script_directory, "CrossOriginInterface.js")
     
+    
     content = open(interface_script_path).read()
     # Run bootloader script in parent and hide div
     components.html(

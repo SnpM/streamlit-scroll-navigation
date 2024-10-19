@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "bootstrap-icons": "^1.11.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "streamlit-component-lib": "^2.0.0",
-    "bootstrap-icons": "^1.7.1"
+    "streamlit-component-lib": "^2.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
