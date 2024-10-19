@@ -26,23 +26,20 @@ class CrossOriginInterface {
         if (element) {
             element.scrollIntoView({ behavior: 'smooth' , block: 'start'});
         }
-
+        this.emphasize(anchorId);
+    }
+    emphasize(anchorId) {
+        const element = document.getElementById(anchorId);
         // Emphasize the element that was scrolled to
-        if (element) {
-            // Scroll to the element smoothly
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    
+        if (element) {    
             // Apply inline pop effect styles
-            element.style.transition = 'transform 0.6s ease-in-out, opacity 0.6s ease-in-out, box-shadow 0.6s ease-in-out';
-            element.style.transform = 'scale(1.05)';  // Scale up the element
-            element.style.opacity = '1';             // Set opacity to full
+            element.style.transition = 'transform 0.4s ease-in-out';
+            element.style.transform = 'scale(1.04)';  // Scale up the element
     
             // Remove the effect after the animation completes
             setTimeout(() => {
                 element.style.transform = 'scale(1)';  // Return to original size
-                element.style.opacity = '1';           // Ensure full opacity remains
-                element.style.boxShadow = 'none';      // Remove shadow
-            }, 600);  // Match this duration to the transition time (0.6 seconds)
+            }, 600);
         }
     }
 

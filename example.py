@@ -27,6 +27,9 @@ scroll_navigation_bar(
     anchor_labels=odd_anchor_labels,
     anchor_icons=["gear", "heart", "star", "cloud", "camera"],
     orientation="horizontal")
+
+
+# Generate page content with anchors
 lorem_ipsum = """
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
