@@ -25,7 +25,7 @@ scroll_navigation_bar(
     anchor_ids=odd_anchor_ids,
     key="Othernavbar" ,
     anchor_labels=odd_anchor_labels,
-    anchor_icons=["gear", "heart", "star", "home", "camera", "cloud"],
+    anchor_icons=["gear", "heart", "star", "cloud", "camera"],
     orientation="horizontal")
 lorem_ipsum = """
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 

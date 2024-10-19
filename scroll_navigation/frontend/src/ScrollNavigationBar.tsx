@@ -154,7 +154,7 @@
     // Render menu items dynamically based on props from Streamlit
     public renderMenuItems = (): ReactNode => {
       const { activeAnchorId } = this.state;
-      const { anchor_ids, anchor_labels, anchor_icons, orientation, override_styles } = this.getCleanedArgs();
+      const { anchor_ids, anchor_labels, anchor_icons, orientation } = this.getCleanedArgs();
 
       // Determine if orientation is horizontal or vertical
       const isHorizontal = orientation === "horizontal";
