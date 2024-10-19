@@ -1,5 +1,5 @@
 import streamlit as st
-from scroll_navigation import scroll_navigation
+from scroll_navigation import scroll_navigation_bar
 
 
 anchor_ids = ["anchor1", "anchor2", "anchor3", "anchor4", "anchor5"]
@@ -12,9 +12,9 @@ with st.sidebar:
     force_anchor = None
     if st.button("Force Anchor 2"):
         force_anchor = "anchor2"
-    scroll_navigation(anchor_ids=anchor_ids, force_anchor=force_anchor)
+    scroll_navigation_bar(anchor_ids=anchor_ids, force_anchor=force_anchor)
 
-scroll_navigation(anchor_ids=even_anchor_ids,
+scroll_navigation_bar(anchor_ids=even_anchor_ids,
                   key="Othernavbar" ,
                   anchor_labels=["Apple", "Orange", "Banana", "Watermelon", "Grape", "Strawberry"], orientation="horizontal")
 lorem_ipsum = """

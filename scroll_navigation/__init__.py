@@ -20,17 +20,11 @@ _RELEASE = False
 # your component frontend. Everything else we do in this file is simply a
 # best practice.
 
-COMPONENT_NAME="ScrollNavigationBar"
+COMPONENT_NAME="scroll_navigation_bar"
 
 if not _RELEASE:
     _component_func = components.declare_component(
-        # We give the component a simple, descriptive name ("my_component"
-        # does not fit this bill, so please choose something better for your
-        # own component :)
         COMPONENT_NAME,
-        # Pass `url` here to tell Streamlit that the component will be served
-        # by the local dev server that you run via `npm run start`.
-        # (This is useful while your component is in development.)
         url="http://localhost:3001",
     )
 else:
@@ -43,6 +37,7 @@ else:
     
 def inject_crossorigin_interface():
     interface_script_path = os.path.join(script_directory, "CrossOriginInterface.js")
+    
     content = open(interface_script_path).read()
     # Run bootloader script in parent and hide div
     components.html(
@@ -80,9 +75,9 @@ from typing import *
 # `declare_component` and call it done. The wrapper allows us to customize
 # our component's API: we can pre-process its input args, post-process its
 # output value, and add a docstring for users.
-def scroll_navigation(
+def scroll_navigation_bar(
     anchor_ids:Collection[str],
-    key:str='scroll_navigation_default',
+    key:str='scroll_navigation_bar_default',
     anchor_icons:Collection[str]=None,
     anchor_labels:Collection[str]=None,
     force_anchor:str=None,

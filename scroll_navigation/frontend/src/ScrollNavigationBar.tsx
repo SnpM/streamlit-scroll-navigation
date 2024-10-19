@@ -58,7 +58,7 @@
     componentDidUpdate(): void {
       super.componentDidUpdate();
       const { anchor_ids, force_anchor } = this.getCleanedArgs();
-      if (force_anchor != undefined) {
+      if (force_anchor != null) {
         if (anchor_ids.includes(force_anchor)) {
           this.handleMenuClick(force_anchor);
         } else {
