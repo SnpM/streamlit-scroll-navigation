@@ -3,22 +3,28 @@ from scroll_navigation import scroll_navigation_bar
 
 # Generate anchors
 anchor_ids = []
-for i in range(1, 11):
+for i in range(0, 10):
     anchor_ids.append(f"anchor{i}")
-evens = range(1, len(anchor_ids), 2)
-even_anchor_ids = [anchor_ids[i] for i in evens]
-even_anchor_labels = [f"{i+1}" for i in evens]
+    
+# Labels and icons for horizontal navigation bar
+odds = range(0, len(anchor_ids), 2) # i.e. 1, 3, 5, 7, 9
+odd_anchor_ids = [anchor_ids[i] for i in odds]
+odd_anchor_labels = [f"{i}" for i in odds]
 
+# Vertical navigation bar in sidebar
 with st.sidebar:
     force_anchor = None
     if st.button("Force Anchor 2"):
         force_anchor = "anchor2"
+    # anchor_ids is only required parameter
+    # Setting force_anchor to a string will simulate clicking on an anchor
     scroll_navigation_bar(anchor_ids=anchor_ids, force_anchor=force_anchor)
 
+# Horizontal navigation bar of even anchors
 scroll_navigation_bar(
-    anchor_ids=even_anchor_ids,
+    anchor_ids=odd_anchor_ids,
     key="Othernavbar" ,
-    anchor_labels=even_anchor_labels,
+    anchor_labels=odd_anchor_labels,
     anchor_icons=["gear", "heart", "star", "home", "camera", "cloud"],
     orientation="horizontal")
 lorem_ipsum = """

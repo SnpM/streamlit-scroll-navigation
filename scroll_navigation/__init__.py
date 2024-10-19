@@ -71,11 +71,6 @@ def instantiate_crossorigin_interface(key):
     )
 
 from typing import *
-# Create a wrapper function for the component. This is an optional
-# best practice - we could simply expose the component function returned by
-# `declare_component` and call it done. The wrapper allows us to customize
-# our component's API: we can pre-process its input args, post-process its
-# output value, and add a docstring for users.
 def scroll_navigation_bar(
     anchor_ids:Collection[str],
     key:str='scroll_navigation_bar_default',
@@ -83,6 +78,7 @@ def scroll_navigation_bar(
     anchor_labels:Collection[str]=None,
     force_anchor:str=None,
     orientation:Literal['vertical','horizontal']='vertical',
+    override_styles:Dict[str,str]={},
     ):
     inject_crossorigin_interface()
     instantiate_crossorigin_interface(key)
@@ -93,6 +89,7 @@ def scroll_navigation_bar(
         anchor_labels=anchor_labels,
         force_anchor=force_anchor,
         orientation=orientation,
+        override_styles=override_styles,
     )
 
     # We could modify the value returned from the component if we wanted.

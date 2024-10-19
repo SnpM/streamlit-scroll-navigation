@@ -5,7 +5,7 @@
   } from "streamlit-component-lib";
   import React, { ReactNode } from "react";
   import "bootstrap-icons/font/bootstrap-icons.css";
-  
+  import { CSSProperties } from "react";
 
   interface State {
     activeAnchorId: string;
@@ -87,7 +87,7 @@
     }
 
     private getCleanedArgs() {
-      let { key, anchor_ids, anchor_labels, anchor_icons, force_anchor, orientation } = this.props.args;
+      let { key, anchor_ids, anchor_labels, anchor_icons, force_anchor, orientation, override_styles} = this.props.args;
       //key is required
       if (key == null || typeof key !== "string") {
         throw new Error("Invalid key: key must be a string.");
@@ -132,72 +132,98 @@
         }
       }
 
-      return { anchor_ids, anchor_labels, anchor_icons, force_anchor, key, orientation };
+      //button_style is an optional dictionary with CSS styles that override the styles in styles
+      if (override_styles == null) {
+        override_styles = {};
+      } else {
+        if (typeof override_styles !== "object" || Array.isArray(override_styles)) {
+          throw new Error("Invalid override_styles: override_styles must be an object.");
+        }
+        // Check if override_styles contains relevant keys
+        const style_keys = Object.keys(styles);
+        for (const key of Object.keys(override_styles)) {
+          if (!style_keys.includes(key)) {
+            throw new Error(`Invalid override_styles key: ${key} is not a valid style key.`);    
+          }    
+      }
+    }
+
+      return { anchor_ids, anchor_labels, anchor_icons, force_anchor, key, orientation, override_styles};
     }
 
     // Render menu items dynamically based on props from Streamlit
     public renderMenuItems = (): ReactNode => {
       const { activeAnchorId } = this.state;
-      const { anchor_ids, anchor_labels, anchor_icons, orientation } = this.getCleanedArgs();
+      const { anchor_ids, anchor_labels, anchor_icons, orientation, override_styles } = this.getCleanedArgs();
 
       // Determine if orientation is horizontal or vertical
       const isHorizontal = orientation === "horizontal";
 
-      return anchor_ids.map((anchor_id: string, index: number) => (
-        <div
-          key={anchor_id}
-          onClick={() => this.handleMenuClick(anchor_id)}
-          style={{
-            display: "flex",
-            flexDirection: isHorizontal ? "row" : "column", // Handle layout direction
-            justifyContent: isHorizontal ? "center" : "flex-start", // Adjust alignment for horizontal
-            padding: "15px 20px",
-            backgroundColor: activeAnchorId === anchor_id ? "#4A4A4A" : "transparent",
-            color: activeAnchorId === anchor_id ? "#fff" : "#FFD700",
-            cursor: "pointer",
-            fontWeight: activeAnchorId === anchor_id ? "bold" : "normal",
-            borderRadius: "8px",
-            margin: isHorizontal ? "0 5px" : "2px 0", // Adjust margin based on orientation
-            textAlign: "center",
-            width: "100%", // Take full width in vertical mode
-            transition: "background-color 0.3s, color 0.3s", // Smooth transition for hover effect
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLElement).style.backgroundColor = "#555";
-            (e.currentTarget as HTMLElement).style.color = "#fff";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLElement).style.backgroundColor = activeAnchorId === anchor_id ? "#4A4A4A" : "transparent";
-            (e.currentTarget as HTMLElement).style.color = activeAnchorId === anchor_id ? "#fff" : "#FFD700";
-          }}
-        >
-          {/* Render Bootstrap icon if provided */}
-          {anchor_icons && anchor_icons[index] && (
-            <i className={`bi-${anchor_icons[index]}`} style={{ marginRight: isHorizontal ? "10px" : "0px", fontSize: "18px" }}></i>
-          )}
-          <span>{anchor_labels[index]}</span>
-        </div>
-      )
-    );
+    return anchor_ids.map((anchor_id: string, index: number) => (
+      <div
+        key={anchor_id}
+        onClick={() => this.handleMenuClick(anchor_id)}
+        //This is navbar button style
+        style={{
+          //Apply base navbarButton style
+          ...styles.navbarButtonBase,
+          //Use horizontal or vertical navbarButton
+          ...styles[isHorizontal ? "navbarButtonHorizontal" : "navbarButtonVertical"],
+          //Set active style if active
+          ...(activeAnchorId === anchor_id ? styles.navbarButtonActive : {}),
+        }}
+
+        //Change style on hover
+        onMouseEnter={(e) => {
+          //Apply ...styles.navbarButtonHover
+          e.currentTarget.style.backgroundColor = styles.navbarButtonHover.backgroundColor || "";
+          e.currentTarget.style.color = styles.navbarButtonHover.color || "";
+        }}
+        //Reset style on mouse leave
+        onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
+          const newStyle: CSSProperties = {
+            backgroundColor: styles.navbarButtonBase.backgroundColor,
+            color: styles.navbarButtonBase.color,
+            ...(activeAnchorId === anchor_id ? styles.navbarButtonActive : {}),
+          }
+          e.currentTarget.style.backgroundColor = newStyle.backgroundColor || "";
+          e.currentTarget.style.color = newStyle.color || "";
+        }}
+      >
+        {/* Render Bootstrap icon if provided */}
+        {anchor_icons && anchor_icons[index] && (
+          <i className={`bi-${anchor_icons[index]}`} style={{ marginRight: isHorizontal ? "10px" : "0px", fontSize: "18px" }}></i>
+        )}
+        <span>{anchor_labels[index]}</span>
+      </div>
+    ));
     };
 
     // Render sidebar with dynamic orientation handling
     public render = (): ReactNode => {
-      const { orientation } = this.getCleanedArgs();
+      const { orientation, override_styles} = this.getCleanedArgs();
 
+      //Update styles with override_styles
+      // Deep merge override_styles into styles
+      const mergeDeep = (target: any, source: any) => {
+        for (const key in source) {
+          if (source[key] instanceof Object && key in target) {
+            Object.assign(source[key], mergeDeep(target[key], source[key]));
+          }
+        }
+        Object.assign(target || {}, source);
+        return target;
+      };
+      mergeDeep(styles, override_styles);
       // Adjust layout direction based on orientation
       const isHorizontal = orientation === "horizontal";
-
       return (
         <div style={{
-          ...styles.sidebarContainer,
-          flexDirection: isHorizontal ? "row" : "column",
-          width: isHorizontal ? "100vw" : "250px", // Full width for horizontal, fixed for vertical
-          height: isHorizontal ? "auto" : "100vh", // Auto height for horizontal, full for vertical
-          //boxSizing: "border-box", // Ensure the padding is included in the total width/height
-          //overflowY: "auto" // Ensure overflow is handled properly in case of many buttons
+          //Use base navigation bar style
+          ...styles.navigationBarBase,
+          //Set horizontal or vertical style
+          ...styles[isHorizontal ? "navigationBarHorizontal" : "navigationBarVertical"],
         }}>
-          {/* <div style={styles.menuTitle}></div> */}
           <div style={{ display: "flex", flexDirection: isHorizontal ? "row" : "column", width: "100%" }}>
           {this.renderMenuItems()}
           </div>
@@ -206,24 +232,61 @@
     };
   }
 
-  // Styles for the sidebar container and title
-  const styles = {
-    sidebarContainer: {
+  const styles: { [key: string]: CSSProperties } = {
+    navbarButtonBase: {
+      backgroundColor: "#333",
+      color: "#fff",
+      cursor: "pointer",
+      borderRadius: "8px",
+      textAlign: "center",
+      width: "100%",
+      transition: "background-color 0.3s, color 0.3s",
+    },
+    navbarButtonHorizontal: 
+    {
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "center",
+      padding: "15px 20px",
+      margin: "0 5px",
+    },
+    navbarButtonVertical: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      padding: "15px 20px",
+      margin: "2px 0",
+    },
+    navbarButtonActive: {
+      backgroundColor: "#4A4A4A",
+      color: "#fff",
+      fontWeight: "bold",
+    },
+    navbarButtonHover: {
+      backgroundColor: "#555",
+      color: "#fff",
+    },
+
+    navigationBarBase: {
       backgroundColor: "#333",
       padding: "10px",
-      paddingTop: "17px", //Not sure why this is needed to make consistent padding
+      paddingTop: "17px",
       color: "#fff",
       fontFamily: "Arial, sans-serif",
       display: "flex",
-      justifyContent: "center", // Center content horizontally
-      borderRadius: "15px", // Add curved corners
-      // Width and height now dynamically adjusted in render
+      justifyContent: "center",
+      borderRadius: "15px",
     },
-    menuTitle: {
-      fontSize: "18px",
-      fontWeight: "bold",
-      marginBottom: "20px",
-    }
+    navigationBarHorizontal: {
+      flexDirection: "row",
+      width: "100vw",
+      height: "auto",
+    },
+    navigationBarVertical: {
+      flexDirection: "column",
+      width: "250px",
+      height: "100vh",
+    },
   };
 
   export default withStreamlitConnection(ScrollNavigationBar);
