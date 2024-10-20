@@ -15,6 +15,12 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+[dependencies]
+python = ">=3.6"
+setuptools = ">=42"
+wheel = ">=0.34.2"
+streamlit
+
 [tool.setuptools.packages.find]
 where = ["."]
 

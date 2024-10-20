@@ -1,26 +1,41 @@
-name: Publish Python Package to PyPI and TestPyPI
+name: Publish streamlit-scroll-navigation to PyPI and TestPyPI
 
 on:
   push:
     tags:
-      - 'v*.*.*'  # Only run workflow on version tags like v1.0.0
+      - 'v*.*.*'  # Run workflow on version tags like v1.0.0
 
 jobs:
   build:
-    name: Build distribution 📦
+    name: Build distribution for streamlit-scroll-navigation
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: "3.x"
 
-    - name: Install pypa/build
-      run: python3 -m pip install build --user
+    - name: Install Python dependencies
+      run: python3 -m pip install -r requirements.txt
 
-    - name: Build a binary wheel and a source tarball
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16.x'  # Adjust to your Node version
+
+    - name: Install frontend dependencies
+      working-directory: ./frontend  # Change if your frontend is in a different directory
+      run: npm install
+
+    - name: Build frontend
+      working-directory: ./frontend
+      run: npm run build
+
+    - name: Build Python package
       run: python3 -m build
 
     - name: Store the distribution packages
@@ -30,18 +45,18 @@ jobs:
         path: dist/
 
   publish-to-pypi:
-    name: Publish Python Package to PyPI
-    if: startsWith(github.ref, 'refs/tags/')  # Only publish on tag pushes
+    name: Publish streamlit-scroll-navigation to PyPI
+    if: startsWith(github.ref, 'refs/tags/')  # Only publish on tagged commits
     needs: build
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/project/streamlit-scroll-navigation/  # Replace <package-name> with your actual package name
+      url: https://pypi.org/project/streamlit-scroll-navigation/  # Replace with your actual package URL
     permissions:
       id-token: write  # Mandatory for trusted publishing
 
     steps:
-    - name: Download the distribution packages
+    - name: Download distribution packages
       uses: actions/download-artifact@v4
       with:
         name: python-package-distributions
@@ -51,17 +66,17 @@ jobs:
       uses: pypa/gh-action-pypi-publish@v1.5.0
 
   publish-to-testpypi:
-    name: Publish Python Package to TestPyPI
+    name: Publish streamlit-scroll-navigation to TestPyPI
     needs: build
     runs-on: ubuntu-latest
     environment:
       name: testpypi
-      url: https://test.pypi.org/project/streamlit-scroll-navigation/  # Replace <package-name> with your actual package name
+      url: https://test.pypi.org/project/streamlit-scroll-navigation/
     permissions:
       id-token: write  # Mandatory for trusted publishing
 
     steps:
-    - name: Download the distribution packages
+    - name: Download distribution packages
       uses: actions/download-artifact@v4
       with:
         name: python-package-distributions
