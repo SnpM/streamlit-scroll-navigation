@@ -43,16 +43,22 @@
       this.setState({ activeAnchorId: anchorId });
       this.postScroll(anchorId);
       this.postUpdateActiveAnchor(anchorId);
+
+      //Send back to Streamlit
       Streamlit.setComponentValue(anchorId);
     };
 
     public componentDidMount(): void {
       const { anchor_ids } = this.getCleanedArgs();
+      const initialAnchorId = anchor_ids[0];
       this.postRegister();
       this.postTrackAnchors(anchor_ids);
-      this.setState({ activeAnchorId: anchor_ids[0] });
+      this.setState({ activeAnchorId: initialAnchorId});
       this.postUpdateActiveAnchor(anchor_ids[0]);
       window.addEventListener("message", this.handleMessage.bind(this));
+
+      //Send back to streamlit
+      Streamlit.setComponentValue(initialAnchorId);
     }
 
     componentDidUpdate(): void {
@@ -81,6 +87,9 @@
         const { anchor_id } = event.data;
         if (anchor_id && typeof anchor_id === "string") {
           this.setState({ activeAnchorId: anchor_id });
+
+          //Send back to Streamlit
+          Streamlit.setComponentValue(anchor_id);
         }
       }
     }
@@ -150,6 +159,14 @@
       return { anchor_ids, anchor_labels, anchor_icons, force_anchor, key, orientation, override_styles};
     }
 
+    static getBiName(icon:string) {
+      //If bi prefix is not provided, add it
+      if (!icon.startsWith("bi-")) {
+        return "bi-" + icon;
+      }
+      return icon;
+    }
+
     // Render menu items dynamically based on props from Streamlit
     public renderMenuItems = (): ReactNode => {
       const { activeAnchorId } = this.state;
@@ -190,10 +207,13 @@
         }}
       >
         {/* Render Bootstrap icon if provided */}
+        
+        <span>
         {anchor_icons && anchor_icons[index] && (
-          <i className={`bi-${anchor_icons[index]}`} style={{ marginRight: isHorizontal ? "10px" : "0px", fontSize: "18px" }}></i>
-        )}
-        <span>{anchor_labels[index]}</span>
+          <i className={`${ScrollNavigationBar.getBiName(anchor_icons[index])}`}
+            style={styles.navbarButtonIcon}></i>  )}
+        {anchor_labels[index]
+          }</span>
       </div>
     ));
     };
@@ -236,10 +256,11 @@
       backgroundColor: "#333",
       color: "#fff",
       cursor: "pointer",
-      borderRadius: "8px",
-      textAlign: "center",
+      borderRadius: "2px",
+      textAlign: "left",
       width: "100%",
       transition: "background-color 0.3s, color 0.3s",
+      fontSize: "16px"
     },
     navbarButtonHorizontal: 
     {
@@ -248,13 +269,15 @@
       justifyContent: "center",
       padding: "15px 20px",
       margin: "0 5px",
+      flexGrow: 1,
+      whiteSpace: "nowrap"
     },
     navbarButtonVertical: {
       display: "flex",
       flexDirection: "column",
       justifyContent: "center",
       padding: "15px 20px",
-      margin: "2px 0",
+      margin: "0px 0",
     },
     navbarButtonActive: {
       backgroundColor: "#4A4A4A",
@@ -265,7 +288,9 @@
       backgroundColor: "#555",
       color: "#fff",
     },
-
+    navbarButtonIcon: {
+      marginRight: "10px",
+    },
     navigationBarBase: {
       backgroundColor: "#333",
       padding: "10px",
