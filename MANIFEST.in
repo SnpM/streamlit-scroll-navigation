@@ -1,1 +1,1 @@
-recursive-include my_component/frontend/build *
+recursive-include streamlit_scroll_navigation/frontend/build *

@@ -1,5 +1,5 @@
 import streamlit as st
-from scroll_navigation import scroll_navigation_bar
+from streamlit_scroll_navigation import scroll_navigation_bar
 
 # Generate anchors
 anchor_ids = []
@@ -7,9 +7,9 @@ for i in range(0, 10):
     anchor_ids.append(f"anchor{i}")
     
 # Labels and icons for horizontal navigation bar
-odds = range(0, len(anchor_ids), 2) # i.e. 1, 3, 5, 7, 9
+odds = range(1, len(anchor_ids), 2) # i.e. 1, 3, 5, 7, 9
 odd_anchor_ids = [anchor_ids[i] for i in odds]
-odd_anchor_labels = [f"{i}" for i in odds]
+odd_anchor_labels = ["One", "Three", "Five", "Seven", "Nine"]
 
 # Vertical navigation bar in sidebar
 with st.sidebar:

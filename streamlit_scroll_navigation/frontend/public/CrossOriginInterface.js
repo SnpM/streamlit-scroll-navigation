@@ -1,6 +1,6 @@
 //Source for CrossOriginInterface class.
 //Build with terser:
-//  npx terser CrossOriginInterface.js --compress 'pure_funcs=["console.debug"]' --mangle --output CrossOriginInterface.min.js
+//  npx terser ./src/CrossOriginInterface.js --compress --mangle 'pure_funcs=["console.debug"]' --output frontend/build/CrossOriginInterface.min.js
 class CrossOriginInterface {
     static instances = {};
     constructor(key) {
@@ -180,7 +180,7 @@ class CrossOriginInterface {
                 this.scroll(scrollAnchorId);
                 break;
             case 'register':
-                console.error('Register can only be called once.');
+                console.debug('Register can only be called once per key.');
                 break;
             case 'trackAnchors':
                 const { anchor_ids } = event.data;

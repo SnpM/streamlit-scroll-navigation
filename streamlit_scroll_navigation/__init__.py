@@ -1,7 +1,11 @@
 import os
 import streamlit.components.v1 as components
+from typing import *
+import requests
 
-script_directory = os.path.dirname(os.path.abspath(__file__))
+dev_url = "http://localhost:3001"
+parent_dir = os.path.dirname(os.path.abspath(__file__))
+build_dir = os.path.join(parent_dir, "frontend/build")
 
 
 _RELEASE = True
@@ -9,18 +13,22 @@ COMPONENT_NAME="scroll_navigation_bar"
 if not _RELEASE:
     _component_func = components.declare_component(
         COMPONENT_NAME,
-        url="http://localhost:3001",
+        url=dev_url,
     )
 else:
-    parent_dir = os.path.dirname(os.path.abspath(__file__))
-    build_dir = os.path.join(parent_dir, "frontend/build")
     _component_func = components.declare_component(COMPONENT_NAME, path=build_dir)
     
 def inject_crossorigin_interface():
     """Inject the CrossOriginInterface script into the parent scope."""
-    file_name = _RELEASE and "CrossOriginInterface.min.js" or "CrossOriginInterface.js"
-    interface_script_path = os.path.join(script_directory, file_name)    
-    content = open(interface_script_path).read()
+    content = None
+    if _RELEASE:
+        interface_script_path = os.path.join(build_dir, "CrossOriginInterface.min.js")    
+        content = open(interface_script_path).read()
+    else:
+        # Load the script from dev_url
+        response = requests.get(f"{dev_url}/CrossOriginInterface.js")
+        content = response.text
+        pass
     # Run bootloader script in parent and hide div
     components.html(
         f"""
@@ -51,7 +59,6 @@ def instantiate_crossorigin_interface(key):
         width=0,
     )
 
-from typing import *
 def scroll_navigation_bar(
     anchor_ids: Collection[str],
     key: str = 'scroll_navigation_bar_default',
