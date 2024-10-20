@@ -1,6 +1,12 @@
-# streamlit-custom-component
+# streamlit-scroll-navigation
 
-Streamlit component for scrollable navigation in single-page applications (i.e., scroll spy behavior).
+scroll_navigation_bar is a Streamlit component that
+gives developers scrollable navigation for long pages.
+Scrollable navigation enables long, fluid single-page sites.
+
+This component is built on React.
+It uses parent DOM injection to enable cross-origin interactions.
+The API and aesthetic are inspired by victoryhb's [streamlit-option-menu](https://github.com/victoryhb/streamlit-option-menu)
 
 ## Installation instructions
 
@@ -15,8 +21,8 @@ import streamlit as st
 from streamlit_scroll_navigation import scroll_navigation_bar
 
 # Dummy page setup
-anchor_ids = ["Introduction", "Settings", "Body", "Report", "Conclusion"]
-anchor_icons = ["house", "gear", "body", "clipboard", "door"]
+anchor_ids = ["About", "Features", "Settings", "Pricing", "Contact"]
+anchor_icons = ["info-circle", "lightbulb", "gear", "tag", "envelope"]
 for anchor_id in anchor_ids:
     st.subheader(anchor_id)
     st.write(["content "] * 100)
@@ -44,4 +50,10 @@ scroll_navigation_bar(
         anchor_icons=anchor_icons,
         orientation="horizontal",
         force_anchor=force_body)
+
+# Retrieving active anchor
+active_anchor = scroll_navigation_bar(
+    anchor_ids,
+    orientation="horizontal")
+st.write(f"{active_anchor} is active")
 ```
