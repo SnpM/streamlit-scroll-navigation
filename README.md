@@ -1,12 +1,11 @@
 # streamlit-scroll-navigation
 
-scroll_navbar is a Streamlit component that
-enables scroll-based navigation for
-seamless single-page applications. It features:
+This package enables scroll-based navigation for
+seamless single-page Streamlit applications. It features:
 
-- Silky smooth scroll and anchor animations
+- Smooth scroll and anchor animations
 - Configurable navbar icons
-- Highly configurable CSS
+- Configurable styles
 
 ## Installation
 
@@ -15,6 +14,34 @@ pip install streamlit-scroll-navigation
 ```
 
 ## Usage
+
+scroll_navbar() creates a scrollable navigation bar that allows users to navigate to different sections based on provided anchor IDs. It is highly customizable, supporting various orientations, labels, icons, and styles. 
+
+`anchor_ids` (Collection[str]): A collection of anchor IDs that represent the sections or points to navigate to. Required.
+
+`key` (str, optional):
+A unique key for the component. Each navbar must have a unique key for cross-origin message handling.
+Default: `'scroll_navbar_default'`.
+
+`anchor_icons` (Collection[str], optional):
+Icons corresponding to each navigation button. The order of icons provided should correspond to the order of anchor_ids. If not provided, no icons will be displayed.
+Default: `None`.
+
+`anchor_labels` (Collection[str], optional):
+Labels for each navigation button. The order of icons provided should correspond to the order of anchor_ids. If not provided, the anchor IDs will be used as labels. 
+Default: `None`.
+
+`force_anchor` (str, optional):
+A specific anchor ID to automatically navigate to. This simulates clicking on an anchor.
+Default: `None`.
+
+`orientation` (Literal['vertical', 'horizontal'], optional):
+The orientation of the navigation bar, either vertical or horizontal.
+Default: `'vertical'`.
+
+`override_styles` (Dict[str, str], optional):
+A dictionary to override the default styles of the component, allowing further customization.
+Default: `{}`.
 
 
 ## Examples
@@ -25,29 +52,44 @@ import streamlit as st
 from streamlit_scroll_navigation import scroll_navbar
 
 # Dummy page setup
+# Create a dummy streamlit page 
+import streamlit as st
+from streamlit_scroll_navigation import scroll_navbar
+
+# Anchor IDs and icons
 anchor_ids = ["About", "Features", "Settings", "Pricing", "Contact"]
 anchor_icons = ["info-circle", "lightbulb", "gear", "tag", "envelope"]
-for anchor_id in anchor_ids:
-    st.subheader(anchor_id)
-    st.write(["content "] * 100)
 
 # 1. as sidebar menu
 with st.sidebar:
+    st.subheader("Example 1")
     scroll_navbar(
         anchor_ids,
+        #key="navbar1", #use  for first navbar
+
         anchor_icons=anchor_icons)
 
 # 2. horizontal menu
+st.subheader("Example 2")
 scroll_navbar(
         anchor_ids,
+        key = "navbar2",
         anchor_icons=anchor_icons,
         orientation="horizontal")
 
-# 3. CSS style definitions
+# 3. Custom anchor labels with no icons
+st.subheader("Example 3")
 scroll_navbar(
-    key="example_key",
-    anchor_ids=["section1", "section2", "section3"],
-    anchor_labels=["Section 1", "Section 2", "Section 3"],
+    anchor_ids,
+    key="navbar3",
+    anchor_labels=["About Us", "The Features", "The Settings", "The Pricing", "Contact Us"],
+    orientation="horizontal")
+
+# 4. Style overrides
+st.subheader("Example 4")
+scroll_navbar(
+    anchor_ids=anchor_ids,
+    key="navbar4",
     orientation="horizontal",
     override_styles={
         "navbarButtonBase": {
@@ -63,38 +105,57 @@ scroll_navbar(
     }
 )
 
-# 4. Force anchor
+# 5. Force anchor
+st.subheader("Example 5")
 force_body = None
 if st.button("Go to Body"):
     force_body = "Body"
 scroll_navbar(
         anchor_ids,
+        key="5",
         anchor_icons=anchor_icons,
         orientation="horizontal",
         force_anchor=force_body)
 
-# Retrieving active anchor
-active_anchor = scroll_navbar(
-    anchor_ids,
-    orientation="horizontal")
-st.write(f"{active_anchor} is active")
+# 6. Retrieve active anchor
+with st.sidebar:
+    st.subheader("Example 6")
+    active_anchor = scroll_navbar(
+        anchor_ids,
+        key="navbar6",
+        orientation="vertical")
+    st.write(f"{active_anchor} is active")
+
+# Dummy page setup
+for anchor_id in anchor_ids:
+    st.subheader(anchor_id,anchor=anchor_id)
+    st.write("content " * 100)
 ```
 
-### Override Styles
+### Styles Overrides
 The override_styles argument allows you to customize the styles for scroll_navbar component. This property accepts an object containing specific style overrides that will be merged with the base styles defined in the component. By using this option, you can modify the appearance of the navigation bar to better fit your design requirements.
 
 Below is a list of style keys available for customization:
 
-`navbarButtonBase:` Styles for the basic appearance of each navigation button.
-`navbarButtonHorizontal:` Styles specific to horizontally oriented navigation buttons.
-`navbarButtonVertical:` Styles specific to vertically oriented navigation buttons.
-`navbarButtonActive:` Styles applied to the currently active navigation button.
-`navbarButtonHover:` Styles applied to buttons when hovered.
-`navigationBarBase:` Styles for the base navigation bar container.
-`navigationBarHorizontal:` Styles specific to a horizontally oriented navigation bar.
-`navigationBarVertical:` Styles specific to a vertically oriented navigation bar.
+- `navbarButtonBase`: Base button styling with dark background, white text, pointer cursor, and smooth color transitions.
+- `navbarButtonHorizontal` & `navbarButtonVertical`: Orientation-specific properties for horizontal or vertical button alignment.
+- `navbarButtonActive`: Style for active anchor buttons. Sets the background color and font weight.
+- `navbarButtonHover`: Style for hovered buttons. Sets the background colors and font weight.
+- `navigationBarBase`: Core styling for the navigation bar container, setting background, padding, and flexbox layout.
+- `navigationBarHorizontal` & `navigationBarVertical`: Orientation-specific properties for the navigation bar.
 
-## Details
+## Contributions
+
+Contributions are welcome! If you’d like to contribute, follow these steps:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bugfix.
+3. Make your changes and commit them with clear messages.
+4. Open a pull request, and provide a detailed description of your changes.
+
+Feel free to create issues or feature requests as well.
+
 This component is built on React.
-It uses parent DOM injection to enable cross-origin interactions.
-The API and default aesthetic are inspired by victoryhb's [streamlit-option-menu](https://github.com/victoryhb/streamlit-option-menu).
+It uses parent DOM injection to enable cross-origin interactions (see ./streamlit_scroll_navigation/\_\_init__.py).
+The API and stylesx are inspired by victoryhb's [streamlit-option-menu](https://github.com/victoryhb/streamlit-option-menu).
+

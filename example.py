@@ -11,7 +11,7 @@ with st.sidebar:
     st.subheader("Example 1")
     scroll_navbar(
         anchor_ids,
-        key="navbar1",
+        anchor_labels=None, # Use anchor_ids as labels
         anchor_icons=anchor_icons)
 
 # 2. horizontal menu
