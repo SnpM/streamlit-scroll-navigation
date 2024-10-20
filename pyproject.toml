@@ -3,26 +3,29 @@ requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "streamlit-scroll-navigation"
-version = "0.1.0"
-description = "A Streamlit component for sites that need scrollable navigation to anchors."
-readme = "README.md"
-requires-python = ">=3.6"
+name = "streamlit-custom-component"
+version = "0.0.1"
+description = "Streamlit component that allows you to do X"
+readme = { file = "README.md", content-type = "text/markdown" }
+requires-python = ">=3.7"
 license = {text = "MIT"}
+authors = [
+    { name = "John Smith", email = "john@example.com" }
+]
 classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
+    # Add classifiers that match your project
 ]
 
-[dependencies]
-python = ">=3.6"
-setuptools = ">=42"
-wheel = ">=0.34.2"
-streamlit = ">=0.65"
+dependencies = [
+    "streamlit >= 0.63"
+]
 
-[tool.setuptools.packages.find]
-where = ["."]
+[project.optional-dependencies]
+devel = [
+    "wheel",
+    "twine",
+    "setuptools >= 42",
+]
 
 [tool.setuptools]
 include-package-data = true
