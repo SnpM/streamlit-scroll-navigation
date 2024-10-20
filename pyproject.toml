@@ -4,20 +4,30 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "streamlit-custom-component"
-version = "0.0.1"
-description = "Streamlit component that allows you to do X"
+version = "0.1.x"
+description = "Streamlit component for single page navigation scrolling."
 readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.7"
 license = {text = "MIT"}
 authors = [
-    { name = "John Smith", email = "john@example.com" }
+    { name = "John Pan", email = "jpthek9@gmail.com" }
 ]
 classifiers = [
-    # Add classifiers that match your project
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules"
 ]
 
 dependencies = [
-    "streamlit >= 0.63"
+    "streamlit >= 1.0"
 ]
 
 [project.optional-dependencies]
