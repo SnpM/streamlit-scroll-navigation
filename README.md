@@ -1,18 +1,21 @@
 # streamlit-scroll-navigation
 
 scroll_navigation_bar is a Streamlit component that
-gives developers scroll navigation to create
+gives developers scroll navigation for their
 seamless single-page sites. It features:
 
 - Silky smooth scroll and anchor animations
-- Configurable icons for each navigation option
+- Configurable navbar icons
 - Highly configurable CSS
 
-## Installation instructions
+## Installation
 
 ```sh
 pip install streamlit-scroll-navigation
 ```
+
+## Usage
+
 
 ## Examples
 
