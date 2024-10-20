@@ -1,5 +1,5 @@
 import streamlit as st
-from streamlit_scroll_navigation import scroll_navigation_bar
+from streamlit_scroll_navigation import scroll_navbar
 
 # Generate anchors
 anchor_ids = []
@@ -18,10 +18,10 @@ with st.sidebar:
         force_anchor = "anchor2"
     # anchor_ids is only required parameter
     # Setting force_anchor to a string will simulate clicking on an anchor
-    scroll_navigation_bar(anchor_ids=anchor_ids, force_anchor=force_anchor)
+    scroll_navbar(anchor_ids=anchor_ids, force_anchor=force_anchor)
 
 # Horizontal navigation bar of even anchors
-scroll_navigation_bar(
+scroll_navbar(
     anchor_ids=odd_anchor_ids,
     key="Othernavbar" ,
     anchor_labels=odd_anchor_labels,

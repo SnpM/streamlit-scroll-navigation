@@ -1,6 +1,6 @@
 # streamlit-scroll-navigation
 
-scroll_navigation_bar is a Streamlit component that
+scroll_navbar is a Streamlit component that
 gives developers scroll navigation for their
 seamless single-page sites. It features:
 
@@ -22,7 +22,7 @@ pip install streamlit-scroll-navigation
 ```python
 # Create a dummy streamlit page 
 import streamlit as st
-from streamlit_scroll_navigation import scroll_navigation_bar
+from streamlit_scroll_navigation import scroll_navbar
 
 # Dummy page setup
 anchor_ids = ["About", "Features", "Settings", "Pricing", "Contact"]
@@ -33,12 +33,12 @@ for anchor_id in anchor_ids:
 
 # 1. as sidebar menu
 with st.sidebar:
-    scroll_navigation_bar(
+    scroll_navbar(
         anchor_ids,
         anchor_icons=anchor_icons)
 
 # 2. horizontal menu
-scroll_navigation_bar(
+scroll_navbar(
         anchor_ids,
         anchor_icons=anchor_icons,
         orientation="horizontal")
@@ -49,14 +49,14 @@ scroll_navigation_bar(
 force_body = None
 if st.button("Go to Body"):
     force_body = "Body"
-scroll_navigation_bar(
+scroll_navbar(
         anchor_ids,
         anchor_icons=anchor_icons,
         orientation="horizontal",
         force_anchor=force_body)
 
 # Retrieving active anchor
-active_anchor = scroll_navigation_bar(
+active_anchor = scroll_navbar(
     anchor_ids,
     orientation="horizontal")
 st.write(f"{active_anchor} is active")

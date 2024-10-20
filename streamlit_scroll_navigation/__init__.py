@@ -8,7 +8,7 @@ parent_dir = os.path.dirname(os.path.abspath(__file__))
 build_dir = os.path.join(parent_dir, "frontend/build")
 
 _RELEASE = True
-COMPONENT_NAME="scroll_navigation_bar"
+COMPONENT_NAME="scroll_navbar"
 if not _RELEASE:
     _component_func = components.declare_component(
         COMPONENT_NAME,
@@ -60,9 +60,9 @@ window.parent.instantiateCrossOriginInterface('{key}');
         width=0,
     )
 
-def scroll_navigation_bar(
+def scroll_navbar(
     anchor_ids: Collection[str],
-    key: str = 'scroll_navigation_bar_default',
+    key: str = 'scroll_navbar_default',
     anchor_icons: Collection[str] = None,
     anchor_labels: Collection[str] = None,
     force_anchor: str = None,
@@ -75,7 +75,7 @@ def scroll_navigation_bar(
         anchor_ids (Collection[str]): A collection of anchor IDs that can be navigated to.
         key (str, optional):
             A unique key for this component. Any component beyond the first one should specify a key.
-            Defaults to 'scroll_navigation_bar_default'.
+            Defaults to 'scroll_navbar_default'.
         anchor_icons (Collection[str], optional):
             A collection of icons for each navigation button.
             Each icon corresponds to an anchor in anchor_ids.
@@ -100,9 +100,9 @@ def scroll_navigation_bar(
             st.subheader(anchor,anchor=anchor)
             st.write(["content "]*100)
         # Add a scroll navigation bar for anchors
-        from screamlit_scroll_navigation import scroll_navigation_bar
+        from screamlit_scroll_navigation import scroll_navbar
         with st.sidebar():
-            scroll_navigation_bar(anchor_ids)```
+            scroll_navbar(anchor_ids)```
     """
     
     inject_crossorigin_interface()
