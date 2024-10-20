@@ -44,6 +44,24 @@ scroll_navbar(
         orientation="horizontal")
 
 # 3. CSS style definitions
+scroll_navbar(
+    key="example_key",
+    anchor_ids=["section1", "section2", "section3"],
+    anchor_labels=["Section 1", "Section 2", "Section 3"],
+    orientation="horizontal",
+    override_styles={
+        "navbarButtonBase": {
+            "backgroundColor": "#007bff",  # Set a custom button background color
+            "color": "#ffffff",  # Set custom text color
+        },
+        "navbarButtonHover": {
+            "backgroundColor": "#0056b3",  # Set a custom hover color for the buttons
+        },
+        "navigationBarBase": {
+            "backgroundColor": "#f8f9fa",  # Change the navigation bar background color
+        }
+    }
+)
 
 # 4. Force anchor
 force_body = None
@@ -61,6 +79,20 @@ active_anchor = scroll_navbar(
     orientation="horizontal")
 st.write(f"{active_anchor} is active")
 ```
+
+### Override Styles
+The override_styles argument allows you to customize the styles for scroll_navbar component. This property accepts an object containing specific style overrides that will be merged with the base styles defined in the component. By using this option, you can modify the appearance of the navigation bar to better fit your design requirements.
+
+Below is a list of style keys available for customization:
+
+`navbarButtonBase:` Styles for the basic appearance of each navigation button.
+`navbarButtonHorizontal:` Styles specific to horizontally oriented navigation buttons.
+`navbarButtonVertical:` Styles specific to vertically oriented navigation buttons.
+`navbarButtonActive:` Styles applied to the currently active navigation button.
+`navbarButtonHover:` Styles applied to buttons when hovered.
+`navigationBarBase:` Styles for the base navigation bar container.
+`navigationBarHorizontal:` Styles specific to a horizontally oriented navigation bar.
+`navigationBarVertical:` Styles specific to a vertically oriented navigation bar.
 
 ## Details
 This component is built on React.

@@ -45,7 +45,7 @@ if (!window.parent.COI_injected) {{
     script.type = 'text/javascript';
     window.parent.document.head.appendChild(script);
 }}
-</script """,
+</script>""",
         height=0,
         width=0,
     )

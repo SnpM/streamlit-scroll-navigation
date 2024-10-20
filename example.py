@@ -1,41 +1,71 @@
+# Create a dummy streamlit page 
 import streamlit as st
 from streamlit_scroll_navigation import scroll_navbar
 
-# Generate anchors
-anchor_ids = []
-for i in range(0, 10):
-    anchor_ids.append(f"anchor{i}")
-    
-# Labels and icons for horizontal navigation bar
-odds = range(1, len(anchor_ids), 2) # i.e. 1, 3, 5, 7, 9
-odd_anchor_ids = [anchor_ids[i] for i in odds]
-odd_anchor_labels = ["One", "Three", "Five", "Seven", "Nine"]
+# Anchor IDs and icons
+anchor_ids = ["About", "Features", "Settings", "Pricing", "Contact"]
+anchor_icons = ["info-circle", "lightbulb", "gear", "tag", "envelope"]
 
-# Vertical navigation bar in sidebar
+# 1. as sidebar menu
 with st.sidebar:
-    force_anchor = None
-    if st.button("Force Anchor 2"):
-        force_anchor = "anchor2"
-    # anchor_ids is only required parameter
-    # Setting force_anchor to a string will simulate clicking on an anchor
-    scroll_navbar(anchor_ids=anchor_ids, force_anchor=force_anchor)
+    scroll_navbar(
+        anchor_ids,
+        key="navbar1",
+        anchor_icons=anchor_icons)
 
-# Horizontal navigation bar of even anchors
+# 2. horizontal menu
 scroll_navbar(
-    anchor_ids=odd_anchor_ids,
-    key="Othernavbar" ,
-    anchor_labels=odd_anchor_labels,
-    anchor_icons=["gear", "heart", "star", "cloud", "camera"],
+        anchor_ids,
+        key = "navbar2",
+        anchor_icons=anchor_icons,
+        orientation="horizontal")
+
+# 3. Custom anchor labels
+scroll_navbar(
+    anchor_ids,
+    key="navbar3",
+    anchor_labels=["About Us", "Our Features", "Settings", "Pricing", "Contact"],
+    anchor_icons=anchor_icons,
     orientation="horizontal")
 
+# 4. CSS style definitions
+scroll_navbar(
+    anchor_ids=anchor_ids,
+    key="navbar4",
+    orientation="horizontal",
+    override_styles={
+        "navbarButtonBase": {
+            "backgroundColor": "#007bff",  # Set a custom button background color
+            "color": "#ffffff",  # Set custom text color
+        },
+        "navbarButtonHover": {
+            "backgroundColor": "#0056b3",  # Set a custom hover color for the buttons
+        },
+        "navigationBarBase": {
+            "backgroundColor": "#f8f9fa",  # Change the navigation bar background color
+        }
+    }
+)
 
-# Generate page content with anchors
-lorem_ipsum = """
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-"""
-for anchor in anchor_ids:
-    st.subheader(anchor,anchor=anchor)
-    st.write(lorem_ipsum)
+# 5. Force anchor
+force_body = None
+if st.button("Go to Body"):
+    force_body = "Body"
+scroll_navbar(
+        anchor_ids,
+        key="5",
+        anchor_icons=anchor_icons,
+        orientation="horizontal",
+        force_anchor=force_body)
+
+# 6. Retrieve active anchor
+active_anchor = scroll_navbar(
+    anchor_ids,
+    key="navbar6",
+    orientation="horizontal")
+st.write(f"{active_anchor} is active")
+
+# Dummy page setup
+for anchor_id in anchor_ids:
+    st.subheader(anchor_id)
+    st.write("content " * 100)

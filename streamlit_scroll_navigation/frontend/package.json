@@ -3,20 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "babel-preset-react-app": "^10.0.0",
     "bootstrap-icons": "^1.11.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "streamlit-component-lib": "^2.0.0",
-    "babel-preset-react-app": "^10.0.0"
+    "streamlit-component-lib": "^2.0.0"
   },
-  "scripts":{
+  "scripts": {
     "terser-build": "terser ./public/CrossOriginInterface.js --compress 'pure_funcs=[\"console.debug\"]' --mangle -o ./build/CrossOriginInterface.min.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "postbuild": "npm run terser-build"
-
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -39,8 +38,8 @@
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "react-scripts": "^5.0.1",
-    "typescript": "^4.2.0",
     "terser": "^5.36.0",
-    "terser-webpack-plugin": "^5.3.10"
+    "terser-webpack-plugin": "^5.3.10",
+    "typescript": "^4.2.0"
   }
 }

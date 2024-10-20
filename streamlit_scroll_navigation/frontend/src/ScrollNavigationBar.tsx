@@ -278,12 +278,10 @@
     },
     navigationBarHorizontal: {
       flexDirection: "row",
-      width: "100vw",
       height: "auto",
     },
     navigationBarVertical: {
       flexDirection: "column",
-      width: "250px",
       height: "100vh",
     },
   };
