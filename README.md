@@ -1,8 +1,8 @@
 # streamlit-scroll-navigation
 
 scroll_navbar is a Streamlit component that
-gives developers scroll navigation for their
-seamless single-page sites. It features:
+enables scroll-based navigation for
+seamless single-page applications. It features:
 
 - Silky smooth scroll and anchor animations
 - Configurable navbar icons
