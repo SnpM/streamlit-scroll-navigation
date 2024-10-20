@@ -50,7 +50,6 @@
       const { anchor_ids } = this.getCleanedArgs();
       this.postRegister();
       this.postTrackAnchors(anchor_ids);
-
       this.setState({ activeAnchorId: anchor_ids[0] });
       this.postUpdateActiveAnchor(anchor_ids[0]);
       window.addEventListener("message", this.handleMessage.bind(this));

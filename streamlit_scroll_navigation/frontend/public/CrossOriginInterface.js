@@ -10,8 +10,6 @@ class CrossOriginInterface {
             return CrossOriginInterface.instances[key];
         }
         CrossOriginInterface.instances[key] = this;
-
-        //Anchors are sorted in the order they appear in the document
         this.sortedAnchors = [];
         this.trackedAnchors = new Set();
         this.anchorVisibleStates = {};
@@ -31,12 +29,10 @@ class CrossOriginInterface {
     }
     emphasize(anchorId) {
         const element = document.getElementById(anchorId);
-        // Emphasize the element that was scrolled to
         if (element) {    
             // Apply inline pop effect styles
             element.style.transition = 'transform 0.4s ease-in-out';
             element.style.transform = 'scale(1.04)';  // Scale up the element
-    
             // Remove the effect after the animation completes
             setTimeout(() => {
                 element.style.transform = 'scale(1)';  // Return to original size
@@ -56,13 +52,14 @@ class CrossOriginInterface {
 
     checkBestAnchor(){
         if (this.activeAnchorId) {
+            //Check if active anchor is visible, if not we need a new active anchor
             if (this.anchorVisibleStates[this.activeAnchorId]) {
                 return;
             }
+
+            //Search sorted anchors closest to the current active anchor for first visible
             let newActiveAnchorId = null;
-
             const activeAnchorIndex = this.sortedAnchors.indexOf(this.activeAnchorId);
-
             // If anchor dissapeared above screen, find the next anchor below that is visible. 
             for (let i = activeAnchorIndex + 1; i < this.sortedAnchors.length; i++) {
                 const anchorId = this.sortedAnchors[i];
@@ -81,9 +78,10 @@ class CrossOriginInterface {
                     }
                 }
             }
+            
+            //If new anchor found, update the component's active anchor
             if (newActiveAnchorId !== null) {
                 this.activeAnchorId = newActiveAnchorId;
-                // Send a message to iframe to update the active anchor on component
                 this.postMessage('updateActiveAnchor', this.activeAnchorId);
                 console.debug('Sent new active anchor', this.activeAnchorId);
             }

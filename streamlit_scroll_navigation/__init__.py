@@ -7,7 +7,6 @@ dev_url = "http://localhost:3001"
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 build_dir = os.path.join(parent_dir, "frontend/build")
 
-
 _RELEASE = True
 COMPONENT_NAME="scroll_navigation_bar"
 if not _RELEASE:
@@ -20,6 +19,8 @@ else:
     
 def inject_crossorigin_interface():
     """Inject the CrossOriginInterface script into the parent scope."""
+    
+    # Load text content of COI
     content = None
     if _RELEASE:
         interface_script_path = os.path.join(build_dir, "CrossOriginInterface.min.js")    
@@ -29,32 +30,32 @@ def inject_crossorigin_interface():
         response = requests.get(f"{dev_url}/CrossOriginInterface.js")
         content = response.text
         pass
-    # Run bootloader script in parent and hide div
+    
+    # Run COI content in parent
+    # This works because streamlit.components.v1.html() creates an iframe from same domain as the parent scope
+    # Same domain can bypass sandbox restrictions to create an interface for cross-origin iframes
+    # This allows custom components to interact with parent scope
     components.html(
-        f"""
-        <script>
-            frameElement.parentElement.style.display = 'none';
-            if (!window.parent.COI_injected) {{
-            window.parent.COI_injected = true;
-            var script = window.parent.document.createElement('script');
-            script.text = `{content}`;
-            script.type = 'text/javascript';
-            window.parent.document.head.appendChild(script);
-        }}
-        </script>
-        """,
+        f"""<script>
+frameElement.parentElement.style.display = 'none';
+if (!window.parent.COI_injected) {{
+    window.parent.COI_injected = true;
+    var script = window.parent.document.createElement('script');
+    script.text = `{content}`;
+    script.type = 'text/javascript';
+    window.parent.document.head.appendChild(script);
+}}
+</script """,
         height=0,
         width=0,
     )
 def instantiate_crossorigin_interface(key):
     """Instantiate the CrossOriginInterface in the parent scope that responds to messages for key."""
     components.html(
-        f"""
-        <script>
-        frameElement.parentElement.style.display = 'none';
-        window.parent.instantiateCrossOriginInterface('{key}');
-        </script>
-        """,
+        f"""<script>
+frameElement.parentElement.style.display = 'none';
+window.parent.instantiateCrossOriginInterface('{key}');
+</script>""",
         height=0,
         width=0,
     )
@@ -91,6 +92,17 @@ def scroll_navigation_bar(
         override_styles (Dict[str, str], optional): A dictionary of styles to override default styles. Defaults to {}.
     Returns:
         str: The ID of the anchor that is currently selected.
+    Example:
+        ```# Create a dummy streamlit page 
+        import streamlit as st
+        anchor_ids = [f"anchor {num}" for num in range(10)]]
+        for anchor in anchor_ids:
+            st.subheader(anchor,anchor=anchor)
+            st.write(["content "]*100)
+        # Add a scroll navigation bar for anchors
+        from screamlit_scroll_navigation import scroll_navigation_bar
+        with st.sidebar():
+            scroll_navigation_bar(anchor_ids)```
     """
     
     inject_crossorigin_interface()
