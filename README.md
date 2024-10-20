@@ -8,14 +8,40 @@ Streamlit component for scrollable navigation in single-page applications (i.e.,
 pip install streamlit-custom-component
 ```
 
-## Usage instructions
+## Examples
 
 ```python
 import streamlit as st
+from streamlit_scroll_navigation import scroll_navigation_bar
 
-from my_component import my_component
+# Dummy page setup
+anchor_ids = ["Introduction", "Settings", "Body", "Report", "Conclusion"]
+anchor_icons = ["house", "gear", "body", "clipboard", "door"]
+for anchor_id in anchor_ids:
+    st.subheader(anchor_id)
+    st.write(["content "] * 100)
 
-value = my_component()
+# 1. as sidebar menu
+with st.sidebar:
+    scroll_navigation_bar(
+        anchor_ids,
+        anchor_icons=anchor_icons)
 
-st.write(value)
+# 2. horizontal menu
+scroll_navigation_bar(
+        anchor_ids,
+        anchor_icons=anchor_icons,
+        orientation="horizontal")
+
+# 3. CSS style definitions
+
+# 4. Force anchor
+force_body = None
+if st.button("Go to Body"):
+    force_body = "Body"
+scroll_navigation_bar(
+        anchor_ids,
+        anchor_icons=anchor_icons,
+        orientation="horizontal",
+        force_anchor=force_body)
 ```
