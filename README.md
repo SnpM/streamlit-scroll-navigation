@@ -1,36 +1,68 @@
-# streamlit-custom-component
+# streamlit-scroll-navigation
 
-Streamlit component for scrollable navigation in single-page applications (i.e., scrollspy behavior).
+scroll_navigation_bar is a Streamlit component that
+gives developers scroll navigation for their
+seamless single-page sites. It features:
 
-## Installation instructions
+- Silky smooth scroll and anchor animations
+- Configurable navbar icons
+- Highly configurable CSS
+
+## Installation
 
 ```sh
-pip install streamlit-custom-component
+pip install streamlit-scroll-navigation
 ```
 
-## Usage instructions
+## Usage
 
-`scroll_navigation_bar()` requires anchor_ids, a list of anchor ids to list for navigation.
+
+## Examples
 
 ```python
 # Create a dummy streamlit page 
 import streamlit as st
-anchor_ids = [f"anchor {num}" for num in range(10)]]
-for anchor in anchor_ids:
-    st.subheader(anchor,anchor=anchor)
-    st.write(["content "]*100)
+from streamlit_scroll_navigation import scroll_navigation_bar
 
-# Add a scroll navigation bar for anchors
-from screamlit_scroll_navigation import scroll_navigation_bar
-with st.sidebar():
-    scroll_navigation_bar(anchor_ids)```
+# Dummy page setup
+anchor_ids = ["About", "Features", "Settings", "Pricing", "Contact"]
+anchor_icons = ["info-circle", "lightbulb", "gear", "tag", "envelope"]
+for anchor_id in anchor_ids:
+    st.subheader(anchor_id)
+    st.write(["content "] * 100)
+
+# 1. as sidebar menu
+with st.sidebar:
+    scroll_navigation_bar(
+        anchor_ids,
+        anchor_icons=anchor_icons)
+
+# 2. horizontal menu
+scroll_navigation_bar(
+        anchor_ids,
+        anchor_icons=anchor_icons,
+        orientation="horizontal")
+
+# 3. CSS style definitions
+
+# 4. Force anchor
+force_body = None
+if st.button("Go to Body"):
+    force_body = "Body"
+scroll_navigation_bar(
+        anchor_ids,
+        anchor_icons=anchor_icons,
+        orientation="horizontal",
+        force_anchor=force_body)
+
+# Retrieving active anchor
+active_anchor = scroll_navigation_bar(
+    anchor_ids,
+    orientation="horizontal")
+st.write(f"{active_anchor} is active")
 ```
 
-### force_anchor
-
-When setting force_anchor to an anchor's id, this argument simulates clicking on the navigation bar button corresponding to that anchor.
-
-## Example
-```sh
-streamlit run example.py
-```
+## Details
+This component is built on React.
+It uses parent DOM injection to enable cross-origin interactions.
+The API and default aesthetic are inspired by victoryhb's [streamlit-option-menu](https://github.com/victoryhb/streamlit-option-menu).
