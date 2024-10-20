@@ -4,12 +4,10 @@ on:
   push:
     tags:
       - 'v*.*.*'  # Run workflow on version tags like v1.0.0
-
 jobs:
   build:
     name: Build distribution for streamlit-scroll-navigation
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
