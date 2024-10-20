@@ -1,7 +1,10 @@
+//Source for CrossOriginInterface class.
+//Build with terser:
+//  npx terser CrossOriginInterface.js --compress 'pure_funcs=["console.debug"]' --mangle --output CrossOriginInterface.min.js
 class CrossOriginInterface {
     static instances = {};
-    
     constructor(key) {
+
         if (CrossOriginInterface.instances[key]) {
             console.error('CrossOriginInterface instance already exists with key', key);
             return CrossOriginInterface.instances[key];
@@ -16,9 +19,7 @@ class CrossOriginInterface {
         this.component = null;
         this.key = key;
         window.addEventListener("message", this.handleMessage.bind(this));
-
     }
-
     
     scroll(anchorId) {
         const element = document.getElementById(anchorId);
@@ -137,7 +138,9 @@ class CrossOriginInterface {
                     break;
                 }
             }
-            this.sortedAnchors.push(anchorId);
+            if (!inserted) {
+                this.sortedAnchors.push(anchorId);
+            }
             this.sortedAnchors.push(anchorId);
             
             this.observer.observe(anchor);

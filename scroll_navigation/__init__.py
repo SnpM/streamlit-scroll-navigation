@@ -3,42 +3,23 @@ import streamlit.components.v1 as components
 
 script_directory = os.path.dirname(os.path.abspath(__file__))
 
-# Create a _RELEASE constant. We'll set this to False while we're developing
-# the component, and True when we're ready to package and distribute it.
-# (This is, of course, optional - there are innumerable ways to manage your
-# release process.)
-_RELEASE = False
 
-# Declare a Streamlit component. `declare_component` returns a function
-# that is used to create instances of the component. We're naming this
-# function "_component_func", with an underscore prefix, because we don't want
-# to expose it directly to users. Instead, we will create a custom wrapper
-# function, below, that will serve as our component's public API.
-
-# It's worth noting that this call to `declare_component` is the
-# *only thing* you need to do to create the binding between Streamlit and
-# your component frontend. Everything else we do in this file is simply a
-# best practice.
-
+_RELEASE = True
 COMPONENT_NAME="scroll_navigation_bar"
-
 if not _RELEASE:
     _component_func = components.declare_component(
         COMPONENT_NAME,
         url="http://localhost:3001",
     )
 else:
-    # When we're distributing a production version of the component, we'll
-    # replace the `url` param with `path`, and point it to the component's
-    # build directory:
     parent_dir = os.path.dirname(os.path.abspath(__file__))
     build_dir = os.path.join(parent_dir, "frontend/build")
     _component_func = components.declare_component(COMPONENT_NAME, path=build_dir)
     
 def inject_crossorigin_interface():
-    interface_script_path = os.path.join(script_directory, "CrossOriginInterface.js")
-    
-    
+    """Inject the CrossOriginInterface script into the parent scope."""
+    file_name = _RELEASE and "CrossOriginInterface.min.js" or "CrossOriginInterface.js"
+    interface_script_path = os.path.join(script_directory, file_name)    
     content = open(interface_script_path).read()
     # Run bootloader script in parent and hide div
     components.html(
@@ -58,7 +39,7 @@ def inject_crossorigin_interface():
         width=0,
     )
 def instantiate_crossorigin_interface(key):
-    # Instantiate a COI object in the parent frame and hide div
+    """Instantiate the CrossOriginInterface in the parent scope that responds to messages for key."""
     components.html(
         f"""
         <script>
@@ -72,14 +53,39 @@ def instantiate_crossorigin_interface(key):
 
 from typing import *
 def scroll_navigation_bar(
-    anchor_ids:Collection[str],
-    key:str='scroll_navigation_bar_default',
-    anchor_icons:Collection[str]=None,
-    anchor_labels:Collection[str]=None,
-    force_anchor:str=None,
-    orientation:Literal['vertical','horizontal']='vertical',
-    override_styles:Dict[str,str]={},
-    ):
+    anchor_ids: Collection[str],
+    key: str = 'scroll_navigation_bar_default',
+    anchor_icons: Collection[str] = None,
+    anchor_labels: Collection[str] = None,
+    force_anchor: str = None,
+    orientation: Literal['vertical', 'horizontal'] = 'vertical',
+    override_styles: Dict[str, str] = {},
+    ) -> str:
+    """
+    Creates a scroll navigation bar component.
+    Parameters:
+        anchor_ids (Collection[str]): A collection of anchor IDs that can be navigated to.
+        key (str, optional):
+            A unique key for this component. Any component beyond the first one should specify a key.
+            Defaults to 'scroll_navigation_bar_default'.
+        anchor_icons (Collection[str], optional):
+            A collection of icons for each navigation button.
+            Each icon corresponds to an anchor in anchor_ids.
+            Defaults to None.
+        anchor_labels (Collection[str], optional):
+            A collection of labels for each navigation button. 
+            Each label corresponds to an anchor in anchor_ids.
+            If None, the anchor IDs will be used. Defaults to None.
+        force_anchor (str, optional):
+            An anchor ID to force navigation to.
+            Setting this will simulate clicking on an anchor. Defaults to None.
+        orientation (Literal['vertical', 'horizontal'], optional):
+            The orientation of the navigation bar. Defaults to 'vertical'.
+        override_styles (Dict[str, str], optional): A dictionary of styles to override default styles. Defaults to {}.
+    Returns:
+        str: The ID of the anchor that is currently selected.
+    """
+    
     inject_crossorigin_interface()
     instantiate_crossorigin_interface(key)
     component_value = _component_func(
@@ -91,7 +97,4 @@ def scroll_navigation_bar(
         orientation=orientation,
         override_styles=override_styles,
     )
-
-    # We could modify the value returned from the component if we wanted.
-    # There's no need to do this in our simple example - but it's an option.
     return component_value
