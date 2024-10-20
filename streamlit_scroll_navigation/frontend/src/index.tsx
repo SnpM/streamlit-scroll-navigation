@@ -1,6 +1,5 @@
 import React from "react"
 import ReactDOM from "react-dom"
-import MyComponent from "./ScrollNavigationBar"
 import ScrollNavigationBar from "./ScrollNavigationBar"
 
 ReactDOM.render(
