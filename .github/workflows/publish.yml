@@ -1,32 +1,73 @@
-ame: Publish Python Package
+name: Publish Python Package to PyPI and TestPyPI
 
 on:
-  release:
-    types: [created]
+  push:
+    tags:
+      - 'v*.*.*'  # Only run workflow on version tags like v1.0.0
 
 jobs:
   build:
+    name: Build distribution 📦
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
+    - uses: actions/checkout@v4
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
-        python-version: 3.8
+        python-version: "3.x"
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install setuptools wheel twine streamlit
+    - name: Install pypa/build
+      run: python3 -m pip install build --user
 
-    - name: Build package
-      run: python -m build
+    - name: Build a binary wheel and a source tarball
+      run: python3 -m build
 
-    - name: Publish package to PyPI
-      env:
-        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      run: twine upload dist/*
+    - name: Store the distribution packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: python-package-distributions
+        path: dist/
+
+  publish-to-pypi:
+    name: Publish Python Package to PyPI
+    if: startsWith(github.ref, 'refs/tags/')  # Only publish on tag pushes
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/<package-name>/  # Replace <package-name> with your actual package name
+    permissions:
+      id-token: write  # Mandatory for trusted publishing
+
+    steps:
+    - name: Download the distribution packages
+      uses: actions/download-artifact@v4
+      with:
+        name: python-package-distributions
+        path: dist/
+
+    - name: Publish distribution to PyPI
+      uses: pypa/gh-action-pypi-publish@v1.5.0
+
+  publish-to-testpypi:
+    name: Publish Python Package to TestPyPI
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/project/<package-name>/  # Replace <package-name> with your actual package name
+    permissions:
+      id-token: write  # Mandatory for trusted publishing
+
+    steps:
+    - name: Download the distribution packages
+      uses: actions/download-artifact@v4
+      with:
+        name: python-package-distributions
+        path: dist/
+
+    - name: Publish distribution to TestPyPI
+      uses: pypa/gh-action-pypi-publish@v1.5.0
+      with:
+        repository-url: https://test.pypi.org/legacy/
