@@ -19,8 +19,8 @@ jobs:
       with:
         python-version: "3.x"
 
-    - name: Install Python dependencies
-      run: python3 -m pip install -r requirements.txt
+    - name: Install dependencies from pyproject.toml
+      run: pip install build
 
     - name: Set up Node.js
       uses: actions/setup-node@v3
@@ -28,11 +28,11 @@ jobs:
         node-version: '16.x'  # Adjust to your Node version
 
     - name: Install frontend dependencies
-      working-directory: ./frontend  # Change if your frontend is in a different directory
+      working-directory: ./streamlit_scroll_navigation/frontend  # Change if your frontend is in a different directory
       run: npm install
 
     - name: Build frontend
-      working-directory: ./frontend
+      working-directory: ./streamlit_scroll_navigation/frontend
       run: npm run build
 
     - name: Build Python package
