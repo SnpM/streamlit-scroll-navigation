@@ -10,7 +10,7 @@ readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.7"
 license = {text = "MIT"}
 authors = [
-    { name = "John Pan", email = "jpthek9@gmail.com" }
+    { name = "Nibs", homepage = "https://github.com/snpm" }
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -45,3 +45,6 @@ local_scheme = "no-local-version"
 
 [tool.setuptools]
 include-package-data = true
+
+[project.urls]
+Homepage = "https://github.com/snpm"
