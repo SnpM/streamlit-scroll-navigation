@@ -8,7 +8,7 @@ seamless single-page Streamlit applications. It features:
 * **Configurable Icons**: Edit CSS attributes with the override_styles parameter for additional customization.
 * **Styled with Bootstrap**: The component comes styled with Bootstrap for a sleek and responsive design.
 
-Video Demo: https://github.com/user-attachments/assets/28208ecb-53c0-48b4-bc05-59b7a2c90f67
+https://github.com/user-attachments/assets/28208ecb-53c0-48b4-bc05-59b7a2c90f67
 
 App Demo: https://scrollnav-demo.streamlit.app/
 
