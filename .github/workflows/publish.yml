@@ -3,7 +3,7 @@ name: Publish streamlit-scroll-navigation to PyPI and TestPyPI
 on:
   push:
     tags:
-      - 'v*.*.*'  # Run workflow on version tags like v1.0.0
+      - 'v*.*.*'  # Run workflow on version tags like v1.0.0x`
 jobs:
   build:
     name: Build distribution for streamlit-scroll-navigation

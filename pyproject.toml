@@ -40,7 +40,8 @@ devel = [
 [tool.setuptools_scm]
 version_file = "streamlit_scroll_navigation/_version.py"
 local_scheme = "no-local-version"  # This will strip the local version
-version_scheme = "guess-next-dev"  # Guess the next version for commits after tags
+version_scheme = "guess-next-dev"
+
 
 [tool.setuptools]
 include-package-data = true
