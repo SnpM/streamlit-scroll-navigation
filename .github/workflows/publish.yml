@@ -36,6 +36,10 @@ jobs:
       working-directory: ./streamlit_scroll_navigation/frontend
       run: npm run build
 
+    - name: Reset git changes
+      run: git reset --hard
+
+
     - name: Build Python package
       run: python3 -m build
 
@@ -65,7 +69,6 @@ jobs:
         path: dist/
     - name: Publish package distributions to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
-
 
   publish-to-testpypi:
     name: Publish streamlit-scroll-navigation to TestPyPI
