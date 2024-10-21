@@ -19,31 +19,32 @@ pip install streamlit-scroll-navigation
 
 scroll_navbar() creates a scrollable navigation bar that allows users to navigate to different sections based on provided anchor IDs. It is highly customizable, supporting various orientations, labels, icons, and styles. 
 
-`anchor_ids` (Collection[str]): A collection of anchor IDs that represent the sections or points to navigate to. Required.
+- `anchor_ids` ( `Collection[str]` ):  
+  A collection of anchor IDs that represent the sections or points to navigate to. **Required**.
 
-`key` (str, optional):
-A unique key for the component. Each navbar must have a unique key for cross-origin message handling.
-Default: `'scroll_navbar_default'`.
+- `key` ( `str`, optional ):  
+  A unique key for the component. Each navbar must have a unique key for cross-origin message handling.  
+  **Default**: `'scroll_navbar_default'`.
 
-`anchor_icons` (Collection[str], optional):
-Icons corresponding to each navigation button. The order of icons provided should correspond to the order of anchor_ids. If not provided, no icons will be displayed.
-Default: `None`.
+- `anchor_icons` ( `Collection[str]`, optional ):  
+  Icons corresponding to each navigation button. The order of icons provided should correspond to the order of `anchor_ids`. If not provided, no icons will be displayed.  
+  **Default**: `None`.
 
-`anchor_labels` (Collection[str], optional):
-Labels for each navigation button. The order of icons provided should correspond to the order of anchor_ids. If not provided, the anchor IDs will be used as labels. 
-Default: `None`.
+- `anchor_labels` ( `Collection[str]`, optional ):  
+  Labels for each navigation button. The order of labels provided should correspond to the order of `anchor_ids`. If not provided, the anchor IDs will be used as labels.  
+  **Default**: `None`.
 
-`force_anchor` (str, optional):
-A specific anchor ID to automatically navigate to. This simulates clicking on an anchor.
-Default: `None`.
+- `force_anchor` ( `str`, optional ):  
+  A specific anchor ID to automatically navigate to. This simulates clicking on an anchor.  
+  **Default**: `None`.
 
-`orientation` (Literal['vertical', 'horizontal'], optional):
-The orientation of the navigation bar, either vertical or horizontal.
-Default: `'vertical'`.
+- `orientation` ( `Literal['vertical', 'horizontal']`, optional ):  
+  The orientation of the navigation bar, either `vertical` or `horizontal`.  
+  **Default**: `'vertical'`.
 
-`override_styles` (Dict[str, str], optional):
-A dictionary to override the default styles of the component, allowing further customization.
-Default: `{}`.
+- `override_styles` ( `Dict[str, str]`, optional ):  
+  A dictionary to override the default styles of the component, allowing further customization.  
+  **Default**: `{}`.
 
 
 ## Examples
