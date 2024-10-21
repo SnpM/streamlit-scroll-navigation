@@ -40,8 +40,7 @@ devel = [
 [tool.setuptools_scm]
 version_file = "streamlit_scroll_navigation/_version.py"
 local_scheme = "no-local-version"  # This will strip the local version
-version_scheme = "release-branch-semver"  # This will remove the '.post0' part
-
+version_scheme = "guess-next-dev"  # Guess the next version for commits after tags
 
 [tool.setuptools]
 include-package-data = true
