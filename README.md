@@ -8,6 +8,8 @@ seamless single-page Streamlit applications. It features:
 * **Configurable Icons**: You can easily customize bootstrap icons for each option item and the menu title, offering a personalized touch to your navigation.
 * **Styled with Bootstrap**: The component comes styled with Bootstrap for a sleek, responsive look.
 
+Video Demo:
+
 https://github.com/user-attachments/assets/28208ecb-53c0-48b4-bc05-59b7a2c90f67
 
 ## Installation
