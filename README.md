@@ -4,9 +4,9 @@ This package enables scroll-based navigation for
 seamless single-page Streamlit applications. It features:
 
 * **Smooth Animations**: Scrolling to anchors on the page feels fluid and seamless.
-*  **Anchor tracking**: As the user scrolls anchors off the screen, the actively selected anchor automatically updates to the next closest anchor.
-* **Configurable Icons**: You can easily customize bootstrap icons for each option item and the menu title, offering a personalized touch to your navigation.
-* **Styled with Bootstrap**: The component comes styled with Bootstrap for a sleek, responsive look.
+*  **Anchor tracking**: As the user scrolls, the active anchor automatically updates to the nearest visible anchor.
+* **Configurable Icons**: Edit CSS attributes with the override_styles parameter for additional customization.
+* **Styled with Bootstrap**: The component comes styled with Bootstrap for a sleek and responsive design.
 
 Video Demo:
 
