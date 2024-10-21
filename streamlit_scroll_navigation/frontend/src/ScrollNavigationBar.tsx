@@ -293,17 +293,18 @@ const styles: { [key: string]: CSSProperties } = {
   },
   navigationBarBase: {
     backgroundColor: "#333",
-    padding: "10px",
-    paddingTop: "17px",
+    padding: "10px 10px",  // Padding 10px from top and bottom
     color: "#fff",
     fontFamily: "Arial, sans-serif",
     display: "flex",
     justifyContent: "center",
-    borderRadius: "15px",
+    borderRadius: "10px",
+    height: "auto",
   },
   navigationBarHorizontal: {
+    paddingLeft: "5px",
+    paddingRight: "5px",
     flexDirection: "row",
-    height: "auto",
     overflowX: "auto",  // Enable horizontal scrolling
     whiteSpace: "nowrap", // Prevent wrapping of items
     scrollbarWidth: "none",  // Hides scrollbar for Firefox
@@ -312,7 +313,6 @@ const styles: { [key: string]: CSSProperties } = {
   },
   navigationBarVertical: {
     flexDirection: "column",
-    height: "100vh",
   }
 };
 <style scoped>{`.navigationBarHorizontal::-webkit-scrollbar {display: none;}`}</style>
