@@ -3,9 +3,10 @@
 This package enables scroll-based navigation for
 seamless single-page Streamlit applications. It features:
 
-- Smooth scroll and anchor animations
-- Configurable navbar icons
-- Configurable styles
+* **Smooth Animations**: Scrolling to anchors on the page feels fluid and seamless.
+*  **Anchor tracking**: As the user scrolls anchors off the screen, the actively selected anchor automatically updates to the next closest anchor.
+* **Configurable Icons**: You can easily customize bootstrap icons for each option item and the menu title, offering a personalized touch to your navigation.
+* **Styled with Bootstrap**: The component comes styled with Bootstrap for a sleek, responsive look.
 
 https://github.com/user-attachments/assets/28208ecb-53c0-48b4-bc05-59b7a2c90f67
 
@@ -53,12 +54,7 @@ scroll_navbar() creates a scrollable navigation bar that allows users to navigat
 import streamlit as st
 from streamlit_scroll_navigation import scroll_navbar
 
-# Dummy page setup
-# Create a dummy streamlit page 
-import streamlit as st
-from streamlit_scroll_navigation import scroll_navbar
-
-# Anchor IDs and icons
+# Specify anchor IDs and icons
 anchor_ids = ["About", "Features", "Settings", "Pricing", "Contact"]
 anchor_icons = ["info-circle", "lightbulb", "gear", "tag", "envelope"]
 
@@ -128,7 +124,7 @@ with st.sidebar:
         orientation="vertical")
     st.write(f"{active_anchor} is active")
 
-# Dummy page setup
+# Setup dummy page
 for anchor_id in anchor_ids:
     st.subheader(anchor_id,anchor=anchor_id)
     st.write("content " * 100)
