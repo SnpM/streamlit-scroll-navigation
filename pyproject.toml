@@ -10,7 +10,7 @@ readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.7"
 license = {text = "MIT"}
 authors = [
-    { name = "Nibs", homepage = "https://github.com/snpm" }
+    { name = "Nibs"}
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
