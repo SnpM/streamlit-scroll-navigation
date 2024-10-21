@@ -40,6 +40,8 @@ devel = [
 [tool.setuptools_scm]
 version_file = "streamlit_scroll_navigation/_version.py"
 local_scheme = "no-local-version"  # This will strip the local version
+version_scheme = "post-release"  # This will remove the 'dev0' part
+
 
 [tool.setuptools]
 include-package-data = true
