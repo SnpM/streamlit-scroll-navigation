@@ -7,6 +7,8 @@ seamless single-page Streamlit applications. It features:
 - Configurable navbar icons
 - Configurable styles
 
+https://github.com/user-attachments/assets/28208ecb-53c0-48b4-bc05-59b7a2c90f67
+
 ## Installation
 
 ```sh
