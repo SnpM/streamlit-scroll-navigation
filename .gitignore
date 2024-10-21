@@ -384,3 +384,5 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+streamlit_scroll_navigation/_version.py
