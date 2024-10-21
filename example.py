@@ -1,6 +1,7 @@
-# Create a dummy streamlit page 
+# Setup
 import streamlit as st
 from streamlit_scroll_navigation import scroll_navbar
+st.set_page_config(page_title="Scroll Navigation Demo")
 
 # Anchor IDs and icons
 anchor_ids = ["About", "Features", "Settings", "Pricing", "Contact"]
@@ -27,7 +28,13 @@ st.subheader("Example 3")
 scroll_navbar(
     anchor_ids,
     key="navbar3",
-    anchor_labels=["About Us", "The Features", "The Settings", "The Pricing", "Contact Us"],
+    anchor_labels=[
+        "About Us - We're awesome!",
+        "Features - Explore our Product",
+        "Settings - Tailor your Experience",
+        "Pricing - Spend Money to Make Money",
+        "Get in Touch - We're here to help"
+    ],
     orientation="horizontal")
 
 # 4. CSS style definitions
