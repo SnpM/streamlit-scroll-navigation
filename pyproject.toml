@@ -38,6 +38,7 @@ devel = [
 ]
 
 [tool.setuptools_scm]
+version_file = "streamlit_scroll_navigation/_version.py"
 
 [tool.setuptools]
 include-package-data = true
