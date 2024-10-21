@@ -49,7 +49,6 @@ Default: `{}`.
 ## Examples
 
 ```python
-# Create a dummy streamlit page 
 import streamlit as st
 from streamlit_scroll_navigation import scroll_navbar
 
