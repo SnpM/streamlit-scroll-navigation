@@ -39,7 +39,7 @@ devel = [
 
 [tool.setuptools_scm]
 #version_file = "streamlit_scroll_navigation/_version.py"
-version_scheme = "guess-next-dev"
+version_scheme = "post-release"
 local_scheme = "no-local-version"
 
 
