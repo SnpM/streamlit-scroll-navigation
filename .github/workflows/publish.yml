@@ -31,6 +31,9 @@ jobs:
       working-directory: ./streamlit_scroll_navigation/frontend  # Change if your frontend is in a different directory
       run: npm install
 
+    - name: Reset dirty git
+      run: git reset --hard
+
     - name: Build frontend
       working-directory: ./streamlit_scroll_navigation/frontend
       run: npm run build
