@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
+requires = ["setuptools>=42", "wheel", "setuptools_scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -36,6 +36,8 @@ devel = [
     "twine",
     "setuptools >= 42",
 ]
+
+[tool.setuptools_scm]
 
 [tool.setuptools]
 include-package-data = true
