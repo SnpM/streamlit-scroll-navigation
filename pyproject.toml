@@ -5,12 +5,12 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "streamlit-scroll-navigation"
 dynamic = ["version"]
-description = "Streamlit component for single page navigation scrolling."
+description = "Streamlit component for scroll-based page navigation."
 readme = { file = "README.md", content-type = "text/markdown" }
 requires-python = ">=3.7"
 license = {text = "MIT"}
 authors = [
-    { name = "John Pan" }
+    { name = "Nibs"}
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -38,7 +38,7 @@ devel = [
 ]
 
 [tool.setuptools_scm]
-#version_file = "streamlit_scroll_navigation/_version.py"
+#version_file = "streamlit_scroll_navigation/_version.py" 
 local_scheme = "no-local-version"  # This will strip the local version
 version_scheme = "guess-next-dev"
 
@@ -47,4 +47,4 @@ version_scheme = "guess-next-dev"
 include-package-data = true
 
 [project.urls]
-"Homepage" = "https://github.com/snpm/streamlit-scroll-navigation/"
+"homepage" = "https://github.com/snpm/streamlit-scroll-navigation/"
