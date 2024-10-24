@@ -76,7 +76,7 @@ with st.sidebar:
         anchor_ids,
         key="navbar6",
         orientation="vertical")
-    st.write(f"{active_anchor} is active")
+    st.write(f"{active_anchor} is active in Example 6")
 
 # Dummy page setup
 for anchor_id in anchor_ids:
