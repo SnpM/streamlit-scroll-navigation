@@ -1,7 +1,8 @@
 # streamlit-scroll-navigation
 
 This package enables scroll-based navigation for
-seamless single-page Streamlit applications. It features:
+seamless single-page Streamlit applications.
+Use it for portfolios, data stories, or any Streamlit application that presents multiple sections on the same page. It features:
 
 * **Smooth Animations**: Scrolling to anchors on the page feels fluid and seamless.
 *  **Anchor tracking**: As the user scrolls, the active anchor automatically updates to the nearest visible anchor.
