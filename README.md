@@ -24,7 +24,7 @@ pip install streamlit-scroll-navigation
 
 ## Usage
 
-`scroll_navbar()` creates a navigation bar that with buttons that scroll the page to anchor IDs. It is highly customizable, supporting various orientations, labels, icons, and styles. 
+`scroll_navbar()` creates a navigation bar with buttons that scroll the page to anchor IDs. It is highly customizable, supporting various orientations, labels, icons, and styles. 
 
 - `anchor_ids` ( `Collection[str]` ):  
   A collection of anchor IDs that represent the sections or points to navigate to. **Required**.
