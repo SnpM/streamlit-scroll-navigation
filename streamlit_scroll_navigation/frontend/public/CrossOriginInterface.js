@@ -149,19 +149,16 @@ class CrossOriginInterface {
     handleMessage(event) {
         const { COI_method, key} = event.data;
         
-        //If method is undefined, it is not a message from the iframe
-        if (!COI_method) {
-            //Ignore messages from other sources
+        //Check if message is intended for COI
+        if (!COI_method || !key) {
             return;
         }
-        console.debug("COI message", key, "mine: ", this.key, event.data);
-
+        //Check if message is intended for this COI instance
         if (key !== this.key) {
-            //Ignore messages from other CrossOriginInterface instances
             return;
-        } 
+        }
         console.debug("COI with key", key, "received message", event.data);
-
+        
         //If component is not registered, only allow registration method
         if (this.component === null) {
             if (COI_method === 'register') {

@@ -11,9 +11,12 @@ interface State {
   activeAnchorId: string;
 }
 
+//This React component handles the presentation and user input of the ScrollNavigationBar
+//It interfaces with the parent window via CrossOriginInterface.js (COI)
 class ScrollNavigationBar extends StreamlitComponentBase<State> {
   public state = { activeAnchorId: "" };
 
+  // Send message to COI
   postMessage(COI_method: string, data?: { anchor_id?: string; anchor_ids?: string[] }) {
     const { key } = this.props.args;
     if (key == null || typeof key !== "string") {
@@ -30,40 +33,54 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
   }
   postRegister(): void {
     this.postMessage("register");
+    console.debug("postRegister");
   }
   postTrackAnchors(anchor_ids: string[]): void {
     this.postMessage("trackAnchors", { anchor_ids });
+    console.debug("postTrackAnchors", anchor_ids);
   }
   postUpdateActiveAnchor(anchor_id: string): void {
     this.postMessage("updateActiveAnchor", { anchor_id });
+    console.debug("postUpdateActiveAnchor", anchor_id);
   }
 
   // Handle menu item click
   private handleMenuClick = (anchorId: string) => {
+    // Update active anchor for component and COI
     this.setState({ activeAnchorId: anchorId });
-    this.postScroll(anchorId);
     this.postUpdateActiveAnchor(anchorId);
 
-    //Send back to Streamlit
+    // Scroll to anchor with COI
+    this.postScroll(anchorId);
+
+    //Send component value to Streamlit
     Streamlit.setComponentValue(anchorId);
   };
 
   public componentDidMount(): void {
     const { anchor_ids } = this.getCleanedArgs();
     const initialAnchorId = anchor_ids[0];
+
+    // Register component
     this.postRegister();
+    // Tell COI to track anchors for visibility
     this.postTrackAnchors(anchor_ids);
+    // Set initial active anchor for component and COI
     this.setState({ activeAnchorId: initialAnchorId });
     this.postUpdateActiveAnchor(anchor_ids[0]);
+    // Listen for messages from COI
     window.addEventListener("message", this.handleMessage.bind(this));
 
-    //Send back to streamlit
+    //Send component value to streamlit
     Streamlit.setComponentValue(initialAnchorId);
   }
-
+  
   componentDidUpdate(): void {
+    // Call streamlit's componentDidUpdate
     super.componentDidUpdate();
+    
     const { anchor_ids, force_anchor } = this.getCleanedArgs();
+    // If force_anchor is provided, simulate clicking on it
     if (force_anchor != null) {
       if (anchor_ids.includes(force_anchor)) {
         this.handleMenuClick(force_anchor);
@@ -73,8 +90,10 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
     }
   }
 
+  // Handle messages from COI
   private handleMessage(event: MessageEvent) {
     const { COMPONENT_method, key } = event.data;
+    // Check if message is for this component
     if (COMPONENT_method == null || key == null) {
       return;
     }
@@ -192,8 +211,11 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
         //Change style on hover
         onMouseEnter={(e) => {
           //Apply ...styles.navbarButtonHover
-          e.currentTarget.style.backgroundColor = styles.navbarButtonHover.backgroundColor || "";
-          e.currentTarget.style.color = styles.navbarButtonHover.color || "";
+          const newStyle: CSSProperties = {
+            ...styles.navbarButtonHover,
+          }
+          e.currentTarget.style.backgroundColor = newStyle.backgroundColor || "";
+          e.currentTarget.style.color = newStyle.color || "";
         }}
         //Reset style on mouse leave
         onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
@@ -315,6 +337,6 @@ const styles: { [key: string]: CSSProperties } = {
     flexDirection: "column",
   }
 };
-<style scoped>{`.navigationBarHorizontal::-webkit-scrollbar {display: none;}`}</style>
+<style>{`.navigationBarHorizontal::-webkit-scrollbar {display: none;}`}</style>
 
 export default withStreamlitConnection(ScrollNavigationBar);
