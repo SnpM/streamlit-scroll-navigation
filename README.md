@@ -113,6 +113,6 @@ Contributions are welcome! If you’d like to contribute, follow these steps:
 Feel free to create issues or feature requests as well.
 
 This component is built on React.
-It uses parent DOM injection to enable cross-origin interactions (see ./streamlit_scroll_navigation/\_\_init__.py).
-The API and stylesx are inspired by victoryhb's [streamlit-option-menu](https://github.com/victoryhb/streamlit-option-menu).
+It uses parent DOM injection to enable cross-origin interactions (see `./streamlit_scroll_navigation/\_\_init__.py`).
+The API and styles are inspired by victoryhb's [streamlit-option-menu](https://github.com/victoryhb/streamlit-option-menu).
 
