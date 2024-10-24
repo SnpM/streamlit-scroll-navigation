@@ -53,7 +53,7 @@ pip install streamlit-scroll-navigation
 
 - `auto_update_anchor` ( `bool`, optional ):  
   If true, the highlighted anchor will automatically update to the next nearest anchor when the current one is scrolled out of view.  
-  **Default**: `true`.
+  **Default**: `True`.
 
 ## Examples
 

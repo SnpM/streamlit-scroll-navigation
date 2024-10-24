@@ -1,10 +1,9 @@
 //Source for CrossOriginInterface class.
 //Build with terser:
-//  npx terser ./src/CrossOriginInterface.js --compress --mangle 'pure_funcs=["console.debug"]' --output frontend/build/CrossOriginInterface.min.js
+//  npx terser CrossOriginInterface.js --compress --mangle 'pure_funcs=["console.debug"]' --output ../build/CrossOriginInterface.min.js
 class CrossOriginInterface {
     static instances = {};
     constructor(key) {
-
         if (CrossOriginInterface.instances[key]) {
             console.error('CrossOriginInterface instance already exists with key', key);
             return CrossOriginInterface.instances[key];
@@ -17,14 +16,23 @@ class CrossOriginInterface {
         this.component = null;
         this.autoUpdateAnchor = false;
         this.key = key;
+        this.styles = null;
         window.addEventListener("message", this.handleMessage.bind(this));
     }
 
-    register(component, autoUpdateAnchor)     {
+    register(component, autoUpdateAnchor, emphasisStyle)     {
         this.component = component;
         this.autoUpdateAnchor = autoUpdateAnchor;
+        this.emphasisStyle = emphasisStyle;
         console.debug('Registered component', component, autoUpdateAnchor);
     }
+
+    //Styles from ScrollNavigationBar.tsx
+    updateStyles(styles) {
+        this.styles = styles;
+        console.debug('Updated styles', styles);
+    }
+
     scroll(anchorId) {
         const element = document.getElementById(anchorId);
         console.debug('Scrolling to', anchorId); 
@@ -33,19 +41,43 @@ class CrossOriginInterface {
         }
         this.emphasize(anchorId);
     }
+
+    //Emphasize the anchor by scaling it up and down
     emphasize(anchorId) {
         const element = document.getElementById(anchorId);
-        if (element) {    
-            // Apply .4s pop effect with a .1s delay
-            element.style.transition = 'transform 0.4s ease-in-out 0.1s';
-            element.style.transform = 'scale(1.04)';  // Scale up the element
+        if (element) {
+            if (this.styles === null) {
+                console.error('Styles have not been set');
+                return;
+            }
+
+            const emphasisStyle = this.styles["anchorEmphasis"] || null;
+            if (emphasisStyle === null) {
+                console.error('emphasisStyle has not been set');
+                return;
+            }
+            console.debug('Emphasizing', anchorId, emphasisStyle);
+            
+            //Apply each key in styles to the element
+            for (const key in emphasisStyle) {
+                element.style[key] = emphasisStyle[key];
+            }
+            console.debug('Emphasis applied', anchorId, emphasisStyle);
+            
             // Remove the effect after the animation completes
             setTimeout(() => {
-                element.style.transform = 'scale(1)';  // Return to original size
+                //Reset scale
+                //We need to keep element.transition to have animation
+                element.style.transform = 'scale(1)';
+                console.debug('Emphasis removed', anchorId);
             }, 600);
+        }
+        else {
+            console.debug('Element does not exist for emphasis', anchorId);
         }
     }
 
+    //Update the active anchor to the provided anchorId
     updateActiveAnchor(anchorId) {
         if (this.trackedAnchors.has(anchorId)) {
             this.activeAnchorId = anchorId;
@@ -56,6 +88,7 @@ class CrossOriginInterface {
         }
     }
 
+    //Check if the current active anchor is still visible, if not find the closest visible anchor to make active
     checkBestAnchor(){
         if (this.activeAnchorId) {
             //Check if active anchor is visible, if not we need a new active anchor
@@ -94,6 +127,7 @@ class CrossOriginInterface {
         }
     }
 
+    //Send a message to the component
     postMessage(COMPONENT_method, anchor_id) {
         if (this.component === null) {
             console.error('Component has not been registered');
@@ -117,6 +151,7 @@ class CrossOriginInterface {
         });
     }, { threshold: [0, 1] });
 
+    //Start tracking anchors for visibility
     trackAnchors(anchor_ids) {
         for (const anchorId of anchor_ids) {
             if (this.trackedAnchors.has(anchorId)) {
@@ -152,6 +187,7 @@ class CrossOriginInterface {
         }
     }
         
+    //Handle messages from the component
     handleMessage(event) {
         const { COI_method, key} = event.data;
         
@@ -168,8 +204,8 @@ class CrossOriginInterface {
         //If component is not registered, only allow registration method
         if (this.component === null) {
             if (COI_method === 'register') {
-                const {auto_update_anchor} = event.data;
-                this.register(event.source, auto_update_anchor);
+                const {auto_update_anchor, emphasis_style} = event.data;
+                this.register(event.source, auto_update_anchor, emphasis_style);
             }
             else {
                 console.error('Must register component with this CrossOriginInterface before calling other methods');
@@ -177,12 +213,16 @@ class CrossOriginInterface {
         }
 
         switch (COI_method) {
+            case 'register':
+                console.debug('Register can only be called once per key.');
+                break;
+            case 'updateStyles':
+                const {styles} = event.data;
+                this.updateStyles(styles);
+                break;
             case 'scroll':
                 const { anchor_id: scrollAnchorId } = event.data;
                 this.scroll(scrollAnchorId);
-                break;
-            case 'register':
-                console.debug('Register can only be called once per key.');
                 break;
             case 'trackAnchors':
                 const { anchor_ids } = event.data;

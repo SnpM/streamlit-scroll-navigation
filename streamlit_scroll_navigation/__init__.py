@@ -3,11 +3,11 @@ import streamlit.components.v1 as components
 from typing import *
 import requests
 
-dev_url = "http://localhost:3001"
+dev_url = "http://localhost:3000"
 parent_dir = os.path.dirname(os.path.abspath(__file__))
 build_dir = os.path.join(parent_dir, "frontend/build")
 
-_RELEASE = True
+_RELEASE = False
 COMPONENT_NAME="scroll_navbar"
 if not _RELEASE:
     _component_func = components.declare_component(
@@ -68,7 +68,7 @@ def scroll_navbar(
     force_anchor: str = None,
     orientation: Literal['vertical', 'horizontal'] = 'vertical',
     override_styles: Dict[str, str] = {},
-    auto_update_anchor: bool = True
+    auto_update_anchor: bool = True,
     ) -> str:
     """
     Creates a scroll navigation bar component.
@@ -94,7 +94,7 @@ def scroll_navbar(
             A dictionary of styles to override default styles. Defaults to {}.
         auto_update_anchor (bool, optional):
             If true, the highlighted anchor will automatically update to the next nearest anchor when the current one is scrolled out of view.
-            Defaults to true.
+            Defaults to True.
     Returns:
         str: The ID of the anchor that is currently selected.
     Example:
@@ -121,6 +121,6 @@ def scroll_navbar(
         force_anchor=force_anchor,
         orientation=orientation,
         override_styles=override_styles,
-        auto_update_anchor=auto_update_anchor
+        auto_update_anchor=auto_update_anchor,
     )
     return component_value

@@ -22,19 +22,25 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
       anchor_id?: string;
       anchor_ids?:string[];
       auto_update_anchor?: boolean
+      styles?: { [key: string]: CSSProperties }
     }): void {
     const { key } = this.props.args;
     if (key == null || typeof key !== "string") {
       throw new Error("Invalid key: key must be a string.");
     }
 
-    const { anchor_id, anchor_ids } = data || {};
-    window.parent.postMessage({ COI_method, key, anchor_id, anchor_ids }, "*");
+    const { anchor_id, anchor_ids, styles} = data || {};
+    window.parent.postMessage({ COI_method, key, anchor_id, anchor_ids, styles}, "*");
   }
 
+  
   postRegister(auto_update_anchor:boolean): void {
     this.postMessage("register", { auto_update_anchor } );
     console.debug("postRegister");
+  }
+  postUpdateStyles(styles:{[key:string] : CSSProperties} ): void {
+    this.postMessage("updateStyles", {styles} );
+    console.debug("postUpdateStyles", styles);
   }
   postScroll(anchor_id: string): void {
     this.postMessage("scroll", { anchor_id });
@@ -65,11 +71,13 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
   };
 
   public componentDidMount(): void {
-    const { anchor_ids, auto_update_anchor } = this.getCleanedArgs();
+    const { anchor_ids, auto_update_anchor} = this.getCleanedArgs();
     const initialAnchorId = anchor_ids[0];
 
     // Register component
     this.postRegister(auto_update_anchor);
+    // Send styles to COI
+    this.postUpdateStyles(this.styles);
     // Tell COI to track anchors for visibility
     this.postTrackAnchors(anchor_ids);
     // Set initial active anchor for component and COI
@@ -173,13 +181,15 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
       if (typeof override_styles !== "object" || Array.isArray(override_styles)) {
         throw new Error("Invalid override_styles: override_styles must be an object.");
       }
+
+      /* Commenting out to allow for any style key
       // Check if override_styles contains relevant keys
-      const style_keys = Object.keys(styles);
+      const style_keys = Object.keys(this.styles);
       for (const key of Object.keys(override_styles)) {
         if (!style_keys.includes(key)) {
           throw new Error(`Invalid override_styles key: ${key} is not a valid style key.`);
         }
-      }
+      }*/
     }
 
     //auto_update_active is an optional boolean
@@ -219,18 +229,18 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
         //This is navbar button style
         style={{
           //Apply base navbarButton style
-          ...styles.navbarButtonBase,
+          ...this.styles.navbarButtonBase,
           //Use horizontal or vertical navbarButton
-          ...styles[isHorizontal ? "navbarButtonHorizontal" : "navbarButtonVertical"],
+          ...this.styles[isHorizontal ? "navbarButtonHorizontal" : "navbarButtonVertical"],
           //Set active style if active
-          ...(activeAnchorId === anchor_id ? styles.navbarButtonActive : {}),
+          ...(activeAnchorId === anchor_id ? this.styles.navbarButtonActive : {}),
         }}
 
         //Change style on hover
         onMouseEnter={(e) => {
           //Apply ...styles.navbarButtonHover
           const newStyle: CSSProperties = {
-            ...styles.navbarButtonHover,
+            ...this.styles.navbarButtonHover,
           }
           e.currentTarget.style.backgroundColor = newStyle.backgroundColor || "";
           e.currentTarget.style.color = newStyle.color || "";
@@ -238,9 +248,9 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
         //Reset style on mouse leave
         onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
           const newStyle: CSSProperties = {
-            backgroundColor: styles.navbarButtonBase.backgroundColor,
-            color: styles.navbarButtonBase.color,
-            ...(activeAnchorId === anchor_id ? styles.navbarButtonActive : {}),
+            backgroundColor: this.styles.navbarButtonBase.backgroundColor,
+            color: this.styles.navbarButtonBase.color,
+            ...(activeAnchorId === anchor_id ? this.styles.navbarButtonActive : {}),
           }
           e.currentTarget.style.backgroundColor = newStyle.backgroundColor || "";
           e.currentTarget.style.color = newStyle.color || "";
@@ -249,7 +259,7 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
         <span>
           {anchor_icons && anchor_icons[index] && (
             <i className={`${ScrollNavigationBar.getBiName(anchor_icons[index])}`}
-              style={styles.navbarButtonIcon}></i>)}
+              style={this.styles.navbarButtonIcon}></i>)}
           {anchor_labels[index]
           }</span>
       </div>
@@ -260,26 +270,38 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
   public render = (): ReactNode => {
     const { orientation, override_styles } = this.getCleanedArgs();
 
-    //Update styles with override_styles
     // Deep merge override_styles into styles
     const mergeDeep = (target: any, source: any) => {
+      let changed = false;
       for (const key in source) {
         if (source[key] instanceof Object && key in target) {
-          Object.assign(source[key], mergeDeep(target[key], source[key]));
+          const { changed: childChanged } = mergeDeep(target[key], source[key]);
+          if (childChanged) {
+            changed = true;
+          }
+        } else {
+          if (target[key] !== source[key]) {
+            target[key] = source[key];
+            changed = true;
+          }
         }
       }
-      Object.assign(target || {}, source);
-      return target;
+      return { result: target, changed };
     };
-    mergeDeep(styles, override_styles);
+    const { changed } = mergeDeep(this.styles, override_styles);
+    //Communicate new styles to COI
+    if (changed) {
+      this.postUpdateStyles(this.styles);
+    }
+
     // Adjust layout direction based on orientation
     const isHorizontal = orientation === "horizontal";
     return (
       <div style={{
         //Use base navigation bar style
-        ...styles.navigationBarBase,
+        ...this.styles.navigationBarBase,
         //Set horizontal or vertical style
-        ...styles[isHorizontal ? "navigationBarHorizontal" : "navigationBarVertical"],
+        ...this.styles[isHorizontal ? "navigationBarHorizontal" : "navigationBarVertical"],
       }}>
         <div style={{ display: "flex", flexDirection: isHorizontal ? "row" : "column", width: "100%" }}>
           {this.renderMenuItems()}
@@ -287,72 +309,79 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
       </div>
     );
   };
-}
 
-const styles: { [key: string]: CSSProperties } = {
-  navbarButtonBase: {
-    backgroundColor: "#333",
-    color: "#fff",
-    cursor: "pointer",
-    borderRadius: "2px",
-    textAlign: "left",
-    width: "100%",
-    transition: "background-color 0.3s, color 0.3s",
-    fontSize: "16px"
-  },
-  navbarButtonHorizontal:
-  {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-    padding: "15px 20px",
-    margin: "0 5px",
-    flexGrow: 1,
-    whiteSpace: "nowrap"
-  },
-  navbarButtonVertical: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    padding: "15px 20px",
-    margin: "0px 0",
-  },
-  navbarButtonActive: {
-    backgroundColor: "#4A4A4A",
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  navbarButtonHover: {
-    backgroundColor: "#555",
-    color: "#fff",
-  },
-  navbarButtonIcon: {
-    marginRight: "10px",
-  },
-  navigationBarBase: {
-    backgroundColor: "#333",
-    padding: "10px 10px",  // Padding 10px from top and bottom
-    color: "#fff",
-    fontFamily: "Arial, sans-serif",
-    display: "flex",
-    justifyContent: "center",
-    borderRadius: "10px",
-    height: "auto",
-  },
-  navigationBarHorizontal: {
-    paddingLeft: "5px",
-    paddingRight: "5px",
-    flexDirection: "row",
-    overflowX: "auto",  // Enable horizontal scrolling
-    whiteSpace: "nowrap", // Prevent wrapping of items
-    scrollbarWidth: "none",  // Hides scrollbar for Firefox
-    msOverflowStyle: "none",  // Hides scrollbar for IE
-    WebkitOverflowScrolling: "touch",  // Enables smooth scrolling on iOS
-  },
-  navigationBarVertical: {
-    flexDirection: "column",
+
+  public styles: { [key: string]: CSSProperties } = {
+    navbarButtonBase: {
+      backgroundColor: "#333",
+      color: "#fff",
+      cursor: "pointer",
+      borderRadius: "2px",
+      textAlign: "left",
+      width: "100%",
+      transition: "background-color 0.3s, color 0.3s",
+      fontSize: "16px"
+    },
+    navbarButtonHorizontal:
+    {
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "center",
+      padding: "15px 20px",
+      margin: "0 5px",
+      flexGrow: 1,
+      whiteSpace: "nowrap"
+    },
+    navbarButtonVertical: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      padding: "15px 20px",
+      margin: "0px 0",
+    },
+    navbarButtonActive: {
+      backgroundColor: "#4A4A4A",
+      color: "#fff",
+      fontWeight: "bold",
+    },
+    navbarButtonHover: {
+      backgroundColor: "#555",
+      color: "#fff",
+    },
+    navbarButtonIcon: {
+      marginRight: "10px",
+    },
+    navigationBarBase: {
+      backgroundColor: "#333",
+      padding: "10px 10px",  // Padding 10px from top and bottom
+      color: "#fff",
+      fontFamily: "Arial, sans-serif",
+      display: "flex",
+      justifyContent: "center",
+      borderRadius: "10px",
+      height: "auto",
+    },
+    navigationBarHorizontal: {
+      paddingLeft: "5px",
+      paddingRight: "5px",
+      flexDirection: "row",
+      overflowX: "auto",  // Enable horizontal scrolling
+      whiteSpace: "nowrap", // Prevent wrapping of items
+      scrollbarWidth: "none",  // Hides scrollbar for Firefox
+      msOverflowStyle: "none",  // Hides scrollbar for IE
+      WebkitOverflowScrolling: "touch",  // Enables smooth scrolling on iOS
+    },
+    navigationBarVertical: {
+      flexDirection: "column",
+    },
+    // Anchor emphasis style; after .2s delay, scale up the element 
+    anchorEmphasis: {
+      transition: 'transform 0.4s ease-in-out 0.2s',
+      transform: 'scale(1.04)',  // Scale up the element
+    }
   }
-};
+}
 <style>{`.navigationBarHorizontal::-webkit-scrollbar {display: none;}`}</style>
+
 
 export default withStreamlitConnection(ScrollNavigationBar);
