@@ -98,6 +98,7 @@ Below is a list of style keys available for customization:
 - `navbarButtonHover`: Style for hovered buttons. Sets the background colors and font weight.
 - `navigationBarBase`: Core styling for the navigation bar container, setting background, padding, and flexbox layout.
 - `navigationBarHorizontal` & `navigationBarVertical`: Orientation-specific properties for the navigation bar.
+- `anchorEmphasis`: Style for emphasizing the anchor after a delay. Scales up the element slightly for visual emphasis.
 
 ## Contributions
 
