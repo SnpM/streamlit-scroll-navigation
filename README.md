@@ -22,7 +22,7 @@ pip install streamlit-scroll-navigation
 
 ## Usage
 
-scroll_navbar() creates a scrollable navigation bar that allows users to navigate to different sections based on provided anchor IDs. It is highly customizable, supporting various orientations, labels, icons, and styles. 
+`scroll_navbar()` creates a navigation bar that with buttons that scroll the page to anchor IDs. It is highly customizable, supporting various orientations, labels, icons, and styles. 
 
 - `anchor_ids` ( `Collection[str]` ):  
   A collection of anchor IDs that represent the sections or points to navigate to. **Required**.
@@ -51,6 +51,9 @@ scroll_navbar() creates a scrollable navigation bar that allows users to navigat
   A dictionary to override the default styles of the component, allowing further customization.  
   **Default**: `{}`.
 
+- `auto_update_anchor` ( `bool`, optional ):  
+  If true, the highlighted anchor will automatically update to the next nearest anchor when the current one is scrolled out of view.  
+  **Default**: `true`.
 
 ## Examples
 
@@ -150,7 +153,7 @@ Below is a list of style keys available for customization:
 
 Contributions are welcome! If you’d like to contribute, follow these steps:
 
-1. Fork the repository.
+1. Fork [the repository](https://github.com/SnpM/streamlit-scroll-navigation).
 2. Create a new branch for your feature or bugfix.
 3. Make your changes and commit them with clear messages.
 4. Open a pull request, and provide a detailed description of your changes.
