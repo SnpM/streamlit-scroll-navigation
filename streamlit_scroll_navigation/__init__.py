@@ -68,6 +68,7 @@ def scroll_navbar(
     force_anchor: str = None,
     orientation: Literal['vertical', 'horizontal'] = 'vertical',
     override_styles: Dict[str, str] = {},
+    auto_update_anchor: bool = True
     ) -> str:
     """
     Creates a scroll navigation bar component.
@@ -89,7 +90,11 @@ def scroll_navbar(
             Setting this will simulate clicking on an anchor. Defaults to None.
         orientation (Literal['vertical', 'horizontal'], optional):
             The orientation of the navigation bar. Defaults to 'vertical'.
-        override_styles (Dict[str, str], optional): A dictionary of styles to override default styles. Defaults to {}.
+        override_styles (Dict[str, str], optional):
+            A dictionary of styles to override default styles. Defaults to {}.
+        auto_update_anchor (bool, optional):
+            If true, the highlighted anchor will automatically update to the next nearest anchor when the current one is scrolled out of view.
+            Defaults to true.
     Returns:
         str: The ID of the anchor that is currently selected.
     Example:
@@ -99,6 +104,7 @@ def scroll_navbar(
         for anchor in anchor_ids:
             st.subheader(anchor,anchor=anchor)
             st.write(["content "]*100)
+            
         # Add a scroll navigation bar for anchors
         from screamlit_scroll_navigation import scroll_navbar
         with st.sidebar():
@@ -115,5 +121,6 @@ def scroll_navbar(
         force_anchor=force_anchor,
         orientation=orientation,
         override_styles=override_styles,
+        auto_update_anchor=auto_update_anchor
     )
     return component_value

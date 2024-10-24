@@ -15,10 +15,16 @@ class CrossOriginInterface {
         this.anchorVisibleStates = {};
         this.activeAnchorId = null;
         this.component = null;
+        this.autoUpdateAnchor = false;
         this.key = key;
         window.addEventListener("message", this.handleMessage.bind(this));
     }
-    
+
+    register(component, autoUpdateAnchor)     {
+        this.component = component;
+        this.autoUpdateAnchor = autoUpdateAnchor;
+        console.debug('Registered component', component, autoUpdateAnchor);
+    }
     scroll(anchorId) {
         const element = document.getElementById(anchorId);
         console.debug('Scrolling to', anchorId); 
@@ -162,7 +168,8 @@ class CrossOriginInterface {
         //If component is not registered, only allow registration method
         if (this.component === null) {
             if (COI_method === 'register') {
-                this.component = event.source;
+                const {auto_update_anchor} = event.data;
+                this.register(event.source, auto_update_anchor);
             }
             else {
                 console.error('Must register component with this CrossOriginInterface before calling other methods');

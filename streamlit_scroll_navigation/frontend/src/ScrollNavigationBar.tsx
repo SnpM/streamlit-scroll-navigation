@@ -17,7 +17,12 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
   public state = { activeAnchorId: "" };
 
   // Send message to COI
-  postMessage(COI_method: string, data?: { anchor_id?: string; anchor_ids?: string[] }) {
+  postMessage(COI_method: string,
+    data?: {
+      anchor_id?: string;
+      anchor_ids?:string[];
+      auto_update_anchor?: boolean
+    }): void {
     const { key } = this.props.args;
     if (key == null || typeof key !== "string") {
       throw new Error("Invalid key: key must be a string.");
@@ -27,21 +32,23 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
     window.parent.postMessage({ COI_method, key, anchor_id, anchor_ids }, "*");
   }
 
+  postRegister(auto_update_anchor:boolean): void {
+    this.postMessage("register", { auto_update_anchor } );
+    console.debug("postRegister");
+  }
   postScroll(anchor_id: string): void {
     this.postMessage("scroll", { anchor_id });
     console.debug("postScroll", anchor_id);
-  }
-  postRegister(): void {
-    this.postMessage("register");
-    console.debug("postRegister");
   }
   postTrackAnchors(anchor_ids: string[]): void {
     this.postMessage("trackAnchors", { anchor_ids });
     console.debug("postTrackAnchors", anchor_ids);
   }
   postUpdateActiveAnchor(anchor_id: string): void {
-    this.postMessage("updateActiveAnchor", { anchor_id });
-    console.debug("postUpdateActiveAnchor", anchor_id);
+    const { auto_update_anchor } = this.getCleanedArgs();
+    if (auto_update_anchor)
+      this.postMessage("updateActiveAnchor", { anchor_id });
+    console.debug("postUpdateActiveAnchor", anchor_id, "; autoupdate", auto_update_anchor);
   }
 
   // Handle menu item click
@@ -58,11 +65,11 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
   };
 
   public componentDidMount(): void {
-    const { anchor_ids } = this.getCleanedArgs();
+    const { anchor_ids, auto_update_anchor } = this.getCleanedArgs();
     const initialAnchorId = anchor_ids[0];
 
     // Register component
-    this.postRegister();
+    this.postRegister(auto_update_anchor);
     // Tell COI to track anchors for visibility
     this.postTrackAnchors(anchor_ids);
     // Set initial active anchor for component and COI
@@ -114,7 +121,7 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
   }
 
   private getCleanedArgs() {
-    let { key, anchor_ids, anchor_labels, anchor_icons, force_anchor, orientation, override_styles } = this.props.args;
+    let { key, anchor_ids, anchor_labels, anchor_icons, force_anchor, orientation, override_styles, auto_update_anchor} = this.props.args;
     //key is required
     if (key == null || typeof key !== "string") {
       throw new Error("Invalid key: key must be a string.");
@@ -175,7 +182,18 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
       }
     }
 
-    return { anchor_ids, anchor_labels, anchor_icons, force_anchor, key, orientation, override_styles };
+    //auto_update_active is an optional boolean
+    //If not provided, default to true
+    //If provided, it must be a boolean
+    if (auto_update_anchor == null) {
+      auto_update_anchor = true;
+    } else {
+      if (typeof auto_update_anchor !== "boolean") {
+        throw new Error("Invalid auto_update_anchor: auto_update_anchor must be a boolean.");
+      }
+    }
+
+    return { anchor_ids, anchor_labels, anchor_icons, force_anchor, key, orientation, override_styles, auto_update_anchor };
   }
 
   static getBiName(icon: string) {
@@ -228,8 +246,6 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
           e.currentTarget.style.color = newStyle.color || "";
         }}
       >
-        {/* Render Bootstrap icon if provided */}
-
         <span>
           {anchor_icons && anchor_icons[index] && (
             <i className={`${ScrollNavigationBar.getBiName(anchor_icons[index])}`}
