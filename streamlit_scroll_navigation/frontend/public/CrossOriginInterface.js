@@ -30,8 +30,8 @@ class CrossOriginInterface {
     emphasize(anchorId) {
         const element = document.getElementById(anchorId);
         if (element) {    
-            // Apply inline pop effect styles
-            element.style.transition = 'transform 0.4s ease-in-out';
+            // Apply .4s pop effect with a .1s delay
+            element.style.transition = 'transform 0.4s ease-in-out 0.1s';
             element.style.transform = 'scale(1.04)';  // Scale up the element
             // Remove the effect after the animation completes
             setTimeout(() => {
