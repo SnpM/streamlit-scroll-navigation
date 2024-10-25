@@ -69,6 +69,7 @@ def scroll_navbar(
     orientation: Literal['vertical', 'horizontal'] = 'vertical',
     override_styles: Dict[str, str] = {},
     auto_update_anchor: bool = True,
+    disable_scroll: bool = False,
     ) -> str:
     """
     Creates a scroll navigation bar component.
@@ -93,8 +94,11 @@ def scroll_navbar(
         override_styles (Dict[str, str], optional):
             A dictionary of styles to override default styles. Defaults to {}.
         auto_update_anchor (bool, optional):
-            If true, the highlighted anchor will automatically update to the next nearest anchor when the current one is scrolled out of view.
+            If True, the highlighted anchor will automatically update to the next nearest anchor when the current one is scrolled out of view.
             Defaults to True.
+        disable_scroll (bool, optional):
+            If True, disables the scroll functionality of the navigation bar.
+            Defaults to False.
     Returns:
         str: The ID of the anchor that is currently selected.
     Example:
@@ -122,5 +126,6 @@ def scroll_navbar(
         orientation=orientation,
         override_styles=override_styles,
         auto_update_anchor=auto_update_anchor,
+        disable_scroll=disable_scroll,
     )
     return component_value

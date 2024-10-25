@@ -17,6 +17,7 @@ class CrossOriginInterface {
         this.autoUpdateAnchor = false;
         this.key = key;
         this.styles = null;
+        this.disable_scroll = false;
         window.addEventListener("message", this.handleMessage.bind(this));
     }
 
@@ -24,20 +25,23 @@ class CrossOriginInterface {
         this.component = component;
         this.autoUpdateAnchor = autoUpdateAnchor;
         this.emphasisStyle = emphasisStyle;
-        console.debug('Registered component', component, autoUpdateAnchor);
+        console.debug('Registered component for key ', this.key, ": ", component, autoUpdateAnchor);
     }
 
     //Styles from ScrollNavigationBar.tsx
-    updateStyles(styles) {
+    updateConfig(styles, disable_scroll) {
         this.styles = styles;
-        console.debug('Updated styles', styles);
+        this.disable_scroll = disable_scroll;
+        console.debug('Updated config', styles, disable_scroll);
     }
 
     scroll(anchorId) {
         const element = document.getElementById(anchorId);
         console.debug('Scrolling to', anchorId); 
         if (element) {
-            element.scrollIntoView({ behavior: 'smooth' , block: 'start'});
+            //Apply smooth or instant scrolling
+            const behavior = this.disable_scroll ? 'instant' : 'smooth';
+            element.scrollIntoView({ behavior , block: 'start'});
         }
         this.emphasize(anchorId);
     }
@@ -208,7 +212,7 @@ class CrossOriginInterface {
                 this.register(event.source, auto_update_anchor, emphasis_style);
             }
             else {
-                console.error('Must register component with this CrossOriginInterface before calling other methods');
+                console.error('Must register component with this CrossOriginInterface before calling other methods', event.data);
             }
         }
 
@@ -216,9 +220,9 @@ class CrossOriginInterface {
             case 'register':
                 console.debug('Register can only be called once per key.');
                 break;
-            case 'updateStyles':
-                const {styles} = event.data;
-                this.updateStyles(styles);
+            case 'updateConfig':
+                const {styles, disable_scroll} = event.data;
+                this.updateConfig(styles, disable_scroll);
                 break;
             case 'scroll':
                 const { anchor_id: scrollAnchorId } = event.data;

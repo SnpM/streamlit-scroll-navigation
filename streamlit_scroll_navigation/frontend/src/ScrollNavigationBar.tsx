@@ -15,6 +15,8 @@ interface State {
 //It interfaces with the parent window via CrossOriginInterface.js (COI)
 class ScrollNavigationBar extends StreamlitComponentBase<State> {
   public state = { activeAnchorId: "" };
+  private disable_scroll: boolean = false;
+  private mounted = false;
 
   // Send message to COI
   postMessage(COI_method: string,
@@ -23,38 +25,37 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
       anchor_ids?:string[];
       auto_update_anchor?: boolean
       styles?: { [key: string]: CSSProperties }
-    }): void {
+      disable_scroll?: boolean
+    }): boolean {
     const { key } = this.props.args;
     if (key == null || typeof key !== "string") {
       throw new Error("Invalid key: key must be a string.");
     }
+    window.parent.postMessage({ COI_method, key, ...data }, "*");
 
-    const { anchor_id, anchor_ids, styles} = data || {};
-    window.parent.postMessage({ COI_method, key, anchor_id, anchor_ids, styles}, "*");
+    console.debug("postMessage from ", key, ": ", COI_method, data);
+    return true;
   }
 
   
   postRegister(auto_update_anchor:boolean): void {
     this.postMessage("register", { auto_update_anchor } );
-    console.debug("postRegister");
   }
-  postUpdateStyles(styles:{[key:string] : CSSProperties} ): void {
-    this.postMessage("updateStyles", {styles} );
-    console.debug("postUpdateStyles", styles);
+  postUpdateConfig(): void {
+    let styles = this.styles;
+    let disable_scroll = this.disable_scroll;
+    this.postMessage("updateConfig", {styles, disable_scroll} );
   }
   postScroll(anchor_id: string): void {
     this.postMessage("scroll", { anchor_id });
-    console.debug("postScroll", anchor_id);
   }
   postTrackAnchors(anchor_ids: string[]): void {
     this.postMessage("trackAnchors", { anchor_ids });
-    console.debug("postTrackAnchors", anchor_ids);
   }
   postUpdateActiveAnchor(anchor_id: string): void {
     const { auto_update_anchor } = this.getCleanedArgs();
     if (auto_update_anchor)
       this.postMessage("updateActiveAnchor", { anchor_id });
-    console.debug("postUpdateActiveAnchor", anchor_id, "; autoupdate", auto_update_anchor);
   }
 
   // Handle menu item click
@@ -71,13 +72,15 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
   };
 
   public componentDidMount(): void {
-    const { anchor_ids, auto_update_anchor} = this.getCleanedArgs();
+    const { anchor_ids, auto_update_anchor, disable_scroll} = this.getCleanedArgs();
     const initialAnchorId = anchor_ids[0];
+
+    this.disable_scroll = disable_scroll;
 
     // Register component
     this.postRegister(auto_update_anchor);
     // Send styles to COI
-    this.postUpdateStyles(this.styles);
+    this.postUpdateConfig();
     // Tell COI to track anchors for visibility
     this.postTrackAnchors(anchor_ids);
     // Set initial active anchor for component and COI
@@ -88,6 +91,8 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
 
     //Send component value to streamlit
     Streamlit.setComponentValue(initialAnchorId);
+    
+    this.mounted = true;
   }
   
   componentDidUpdate(): void {
@@ -128,8 +133,18 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
     }
   }
 
-  private getCleanedArgs() {
-    let { key, anchor_ids, anchor_labels, anchor_icons, force_anchor, orientation, override_styles, auto_update_anchor} = this.props.args;
+  private getCleanedArgs(): {
+    anchor_ids: string[],
+    anchor_labels: string[],
+    anchor_icons: string[],
+    force_anchor: string,
+    key: string,
+    orientation: string,
+    override_styles: { [key: string]: CSSProperties },
+    auto_update_anchor: boolean,
+    disable_scroll: boolean }
+  {
+    let { key, anchor_ids, anchor_labels, anchor_icons, force_anchor, orientation, override_styles, auto_update_anchor, disable_scroll} = this.props.args;
     //key is required
     if (key == null || typeof key !== "string") {
       throw new Error("Invalid key: key must be a string.");
@@ -203,7 +218,18 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
       }
     }
 
-    return { anchor_ids, anchor_labels, anchor_icons, force_anchor, key, orientation, override_styles, auto_update_anchor };
+    //disable_scroll is an optional boolean
+    //If not provided, default to false
+    //If provided, it must be a boolean
+    if (disable_scroll == null) {
+      disable_scroll = false;
+    } else {
+      if (typeof disable_scroll !== "boolean") {
+        throw new Error("Invalid disable_scroll: disable_scroll must be a boolean.");
+      }
+    }
+
+    return { anchor_ids, anchor_labels, anchor_icons, force_anchor, key, orientation, override_styles, auto_update_anchor, disable_scroll};
   }
 
   static getBiName(icon: string) {
@@ -268,30 +294,39 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
 
   // Render sidebar with dynamic orientation handling
   public render = (): ReactNode => {
-    const { orientation, override_styles } = this.getCleanedArgs();
+    const { orientation, override_styles, disable_scroll} = this.getCleanedArgs();
 
-    // Deep merge override_styles into styles
-    const mergeDeep = (target: any, source: any) => {
-      let changed = false;
-      for (const key in source) {
-        if (source[key] instanceof Object && key in target) {
-          const { changed: childChanged } = mergeDeep(target[key], source[key]);
-          if (childChanged) {
-            changed = true;
-          }
-        } else {
-          if (target[key] !== source[key]) {
-            target[key] = source[key];
-            changed = true;
+    if (this.mounted) {
+      // Deep merge override_styles into styles
+      const mergeDeep = (target: any, source: any) => {
+        let changed = false;
+        for (const key in source) {
+          if (source[key] instanceof Object && key in target) {
+            const { changed: childChanged } = mergeDeep(target[key], source[key]);
+            if (childChanged) {
+              changed = true;
+            }
+          } else {
+            if (target[key] !== source[key]) {
+              target[key] = source[key];
+              changed = true;
+            }
           }
         }
+        return { result: target, changed };
+      };
+      let { changed } = mergeDeep(this.styles, override_styles);
+
+      // Update disable_scroll if it has changed
+      if (disable_scroll !== this.disable_scroll) {
+        this.disable_scroll = disable_scroll;
+        changed = true;
       }
-      return { result: target, changed };
-    };
-    const { changed } = mergeDeep(this.styles, override_styles);
-    //Communicate new styles to COI
-    if (changed) {
-      this.postUpdateStyles(this.styles);
+
+      //Communicate new styles and other config to COI
+      if (changed) {
+        this.postUpdateConfig()
+      }
     }
 
     // Adjust layout direction based on orientation
