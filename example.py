@@ -21,8 +21,7 @@ scroll_navbar(
         anchor_ids,
         key = "navbar2",
         anchor_icons=anchor_icons,
-        orientation="horizontal",
-        disable_scroll=True)
+        orientation="horizontal")
 
 # 3. Custom anchor labels with no icons
 st.subheader("Example 3")
@@ -69,7 +68,7 @@ scroll_navbar(
         orientation="horizontal",
         force_anchor=force_settings)
 
-# 6. Retrieve active anchor 
+# 6. Retrieve active anchor
 with st.sidebar:
     st.subheader("Example 6")
     active_anchor = scroll_navbar(
@@ -78,14 +77,15 @@ with st.sidebar:
         orientation="vertical")
     st.write(f"{active_anchor} is active in Example 6")
     
-# 7. Disable automatic active anchor updates
+# 7. Disable automatic active anchor updates. Also instant scrolling
 with st.sidebar:
     st.subheader("Example 7")
     scroll_navbar(
         anchor_ids=anchor_ids,
         key="navbar7",
         orientation="vertical",
-        auto_update_anchor=False)
+        auto_update_anchor=False,
+        disable_scroll=True)
 
 # Dummy page setup
 for anchor_id in anchor_ids:
