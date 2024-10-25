@@ -97,7 +97,7 @@ def scroll_navbar(
             If True, the highlighted anchor will automatically update to the next nearest anchor when the current one is scrolled out of view.
             Defaults to True.
         disable_scroll (bool, optional):
-            If True, disables the scroll functionality of the navigation bar.
+            If True, navigation will snap instantly to anchors.
             Defaults to False.
     Returns:
         str: The ID of the anchor that is currently selected.
