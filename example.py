@@ -7,7 +7,7 @@ st.set_page_config(page_title="Scroll Navigation Demo")
 anchor_ids = ["About", "Features", "Settings", "Pricing", "Contact"]
 anchor_icons = ["info-circle", "lightbulb", "gear", "tag", "envelope"]
 
-# 1. as sidebar menu
+# 1. vertical menu in sidebar
 with st.sidebar:
     st.subheader("Example 1")
     scroll_navbar(
@@ -15,7 +15,7 @@ with st.sidebar:
         anchor_labels=None, # Use anchor_ids as labels
         anchor_icons=anchor_icons)
 
-# 2. horizontal menu with scroll disabled
+# 2. horizontal menu
 st.subheader("Example 2")
 scroll_navbar(
         anchor_ids,
