@@ -14,7 +14,7 @@ Video demo:
 
 https://github.com/user-attachments/assets/7c353b89-bbc7-4795-80ac-aef0c808c725
 
-App Demo: https://scrollnav-demo.streamlit.app/
+App demo: https://scrollnav-demo.streamlit.app/
 
 ## Installation
 
@@ -27,7 +27,8 @@ pip install streamlit-scroll-navigation
 `scroll_navbar()` creates a navigation bar with buttons that scroll the page to anchor IDs. It is highly customizable, supporting various orientations, labels, icons, and styles. 
 
 - `anchor_ids` ( `Collection[str]` ):  
-  A collection of anchor IDs that represent the sections or points to navigate to. **Required**.
+  A collection of anchor IDs that represent the sections or points to navigate to.
+  **Required**.
 
 - `key` ( `str`, optional ):  
   A unique key for the component. Each navbar must have a unique key for cross-origin message handling.  
@@ -58,7 +59,7 @@ pip install streamlit-scroll-navigation
   **Default**: `True`.
 - `disable_scroll` (`bool`, optional):
   If True, navigation will snap instantly to anchors.
-  Defaults to False.
+  **Default**: `False`.
 
 ## Examples
 
@@ -93,7 +94,7 @@ for anchor_id in anchor_ids:
 ```
 
 ### Styles Overrides
-The override_styles argument allows you to customize the styles for scroll_navbar component. This property accepts an object containing specific style overrides that will be merged with the base styles defined in the component. By using this option, you can modify the appearance of the navigation bar to better fit your design requirements.
+The `override_styles` argument allows you to customize the styles for scroll_navbar component. This property accepts an object containing specific style overrides that will be merged with the base styles defined in the component. By using this option, you can modify the appearance of the navigation bar to better fit your design requirements.
 
 Below is a list of style keys available for customization:
 
