@@ -147,13 +147,18 @@ class CrossOriginInterface {
                 this.anchorVisibleStates[anchorId] = true;
             } else {
                 this.anchorVisibleStates[anchorId] = false;
-                // If the invisible anchor is the active anchor, find a new active anchor
+                // Rerun checkBestAnchor if the active anchor is no longer visible
                 if (this.activeAnchorId === anchorId) {
-                    this.checkBestAnchor();
+                    //run after a delay to allow for other anchors to be checked
+                    setTimeout(() => {
+                        this.checkBestAnchor();
+                    }
+                    , 0);
                 }
             }
+
         });
-    }, { threshold: [0, 1] });
+    }, { threshold: [0,1] });
 
     //Start tracking anchors for visibility
     trackAnchors(anchor_ids) {

@@ -63,7 +63,7 @@ if st.button("Go to Settings"):
     force_settings = "Settings"
 scroll_navbar(
         anchor_ids,
-        key="5",
+        key="navbar5",
         anchor_icons=anchor_icons,
         orientation="horizontal",
         force_anchor=force_settings)
@@ -77,7 +77,9 @@ with st.sidebar:
         orientation="vertical")
     st.write(f"{active_anchor} is active in Example 6")
     
-# 7. Disable automatic active anchor updates. Also instant scrolling
+# 7. Misc:
+#   Disable automatic active anchor updates, instant scrolling
+#   Instant snap scrolling
 with st.sidebar:
     st.subheader("Example 7")
     scroll_navbar(
@@ -86,7 +88,7 @@ with st.sidebar:
         orientation="vertical",
         auto_update_anchor=False,
         disable_scroll=True)
-
+    
 # Dummy page setup
 for anchor_id in anchor_ids:
     st.subheader(anchor_id,anchor=anchor_id)
