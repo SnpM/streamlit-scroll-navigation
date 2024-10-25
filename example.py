@@ -15,13 +15,14 @@ with st.sidebar:
         anchor_labels=None, # Use anchor_ids as labels
         anchor_icons=anchor_icons)
 
-# 2. horizontal menu
+# 2. horizontal menu with scroll disabled
 st.subheader("Example 2")
 scroll_navbar(
         anchor_ids,
         key = "navbar2",
         anchor_icons=anchor_icons,
-        orientation="horizontal")
+        orientation="horizontal",
+        disable_scroll=True)
 
 # 3. Custom anchor labels with no icons
 st.subheader("Example 3")
@@ -54,8 +55,7 @@ scroll_navbar(
         "navigationBarBase": {
             "backgroundColor": "#f8f9fa",  # Change the navigation bar background color
         }
-    }
-)
+    })
 
 # 5. Force anchor
 st.subheader("Example 5")
