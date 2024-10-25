@@ -1,11 +1,13 @@
 # streamlit-scroll-navigation
 
 This package enables scroll-based navigation for
-seamless single-page Streamlit applications. It features:
+seamless single-page Streamlit applications.
+Use it for portfolios, data stories, or any Streamlit application that presents multiple sections on the same page. It features:
 
 * **Smooth Animations**: Scrolling to anchors on the page feels fluid and seamless.
-*  **Anchor tracking**: As the user scrolls, the active anchor automatically updates to the nearest visible anchor.
-* **Configurable Icons**: Edit CSS attributes with the override_styles parameter for additional customization.
+* **Anchor tracking**: As the user scrolls, the active anchor automatically updates to the nearest visible anchor.
+* **Configurable Icons**: Customize Bootstrap icons for each navigation option to give your app a personal touch.
+* **Customizable Styles**: Edit CSS attributes with the override_styles parameter for additional customization.
 * **Styled with Bootstrap**: The component comes styled with Bootstrap for a sleek and responsive design.
 
 Video demo:
@@ -22,7 +24,7 @@ pip install streamlit-scroll-navigation
 
 ## Usage
 
-`scroll_navbar()` creates a navigation bar that with buttons that scroll the page to anchor IDs. It is highly customizable, supporting various orientations, labels, icons, and styles. 
+`scroll_navbar()` creates a navigation bar with buttons that scroll the page to anchor IDs. It is highly customizable, supporting various orientations, labels, icons, and styles. 
 
 - `anchor_ids` ( `Collection[str]` ):  
   A collection of anchor IDs that represent the sections or points to navigate to. **Required**.
@@ -112,6 +114,6 @@ Contributions are welcome! If you’d like to contribute, follow these steps:
 Feel free to create issues or feature requests as well.
 
 This component is built on React.
-It uses parent DOM injection to enable cross-origin interactions (see ./streamlit_scroll_navigation/\_\_init__.py).
-The API and stylesx are inspired by victoryhb's [streamlit-option-menu](https://github.com/victoryhb/streamlit-option-menu).
+It uses parent DOM injection to enable cross-origin interactions (see [`__init__.py`](https://github.com/SnpM/streamlit-scroll-navigation/blob/main/streamlit_scroll_navigation/__init__.py)).
+The API and styles are inspired by victoryhb's [streamlit-option-menu](https://github.com/victoryhb/streamlit-option-menu).
 
