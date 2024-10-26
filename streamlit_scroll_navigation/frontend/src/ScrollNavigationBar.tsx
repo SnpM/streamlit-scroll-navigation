@@ -65,10 +65,11 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
   private handleMenuClick = (anchorId: string) => {
     // Update active anchor for component and COI
     this.setState({ activeAnchorId: anchorId });
-    this.postUpdateActiveAnchor(anchorId);
 
     // Scroll to anchor with COI
     this.postScroll(anchorId);
+    this.postUpdateActiveAnchor(anchorId);
+
 
     //Send component value to Streamlit
     Streamlit.setComponentValue(anchorId);
@@ -135,6 +136,12 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
       //Validate updateId as number and debug error if invalid
       if (update_id == null || typeof update_id !== "number") {
         console.error("Invalid updateId: updateId must be a number.");
+        return;
+      }
+      
+      const {auto_update_anchor} = this.getCleanedArgs();
+      //If auto_update_anchor is false, do not update the active anchor from external source
+      if (!auto_update_anchor) {
         return;
       }
 

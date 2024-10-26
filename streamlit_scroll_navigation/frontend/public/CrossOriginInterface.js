@@ -19,6 +19,7 @@ class CrossOriginInterface {
         this.styles = null;
         this.disable_scroll = false;
         this.updateId = 0
+        this.enroute = false;
         window.addEventListener("message", this.handleMessage.bind(this));
     }
 
@@ -42,9 +43,15 @@ class CrossOriginInterface {
         if (element) {
             //Apply smooth or instant scrolling
             const behavior = this.disable_scroll ? 'instant' : 'smooth';
+            //If anchorId isn't on page yet, set enroute flag
+            if (!this.anchorVisibleStates[anchorId]) {
+                this.enroute = true;
+            }
+            this.updateActiveAnchor(anchorId);
             element.scrollIntoView({ behavior , block: 'start'});
         }
         this.emphasize(anchorId);
+
     }
 
     //Emphasize the anchor by scaling it up and down
@@ -94,7 +101,12 @@ class CrossOriginInterface {
     }
 
     //Check if the current active anchor is still visible, if not find the closest visible anchor to make active
-    checkBestAnchor(){
+    checkBestAnchor(){        
+        //If enroute, don't change active anchor
+        if (this.enroute) {
+            return;
+        }
+
         if (this.activeAnchorId) {
             //Check if active anchor is visible, if not we need a new active anchor
             if (this.anchorVisibleStates[this.activeAnchorId]) {
@@ -152,14 +164,20 @@ class CrossOriginInterface {
             const anchorId = entry.target.id;
             if (entry.isIntersecting) {
                 this.anchorVisibleStates[anchorId] = true;
+                if (this.activeAnchorId === anchorId) {
+                    this.enroute = false;
+                }
             } else {
                 this.anchorVisibleStates[anchorId] = false;
                 // Rerun checkBestAnchor if the active anchor is no longer visible
                 if (this.activeAnchorId === anchorId) {
-                    this.checkBestAnchor();
+                    //run checkBestAnchor after 0ms to ensure anchors update
+                    setTimeout(() => {
+                        this.checkBestAnchor();
+                    },0);
+                    
                 }
             }
-
         });
     }, { threshold: [0,1] });
 
