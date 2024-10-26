@@ -37,6 +37,7 @@ class CrossOriginInterface {
         console.debug('Updated config', styles, disable_scroll);
     }
 
+    //Scroll to the anchor with the provided anchorId and call updateActiveAnchor
     scroll(anchorId) {
         const element = document.getElementById(anchorId);
         console.debug('Scrolling to', anchorId); 

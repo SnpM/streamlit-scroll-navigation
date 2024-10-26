@@ -66,10 +66,8 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
     // Update active anchor for component and COI
     this.setState({ activeAnchorId: anchorId });
 
-    // Scroll to anchor with COI
+    // Scroll to anchor with COI and update COI's active anchor
     this.postScroll(anchorId);
-    this.postUpdateActiveAnchor(anchorId);
-
 
     //Send component value to Streamlit
     Streamlit.setComponentValue(anchorId);
