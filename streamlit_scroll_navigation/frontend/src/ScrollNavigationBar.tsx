@@ -16,8 +16,8 @@ interface State {
 class ScrollNavigationBar extends StreamlitComponentBase<State> {
   public state = {
     activeAnchorId: "",
-    disable_scroll: false,};
-  private disable_scroll: boolean = false;
+  };
+  private disable_scroll = false
   private mounted = false;
   private updateId = -1;
 
@@ -46,7 +46,7 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
   }
   postUpdateConfig(): void {
     let styles = this.styles;
-    let disable_scroll = this.state.disable_scroll;
+    let disable_scroll = this.disable_scroll;
     this.postMessage("updateConfig", {styles, disable_scroll} );
   }
   postScroll(anchor_id: string): void {
@@ -78,8 +78,7 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
     const { anchor_ids, auto_update_anchor, disable_scroll} = this.getCleanedArgs();
     const initialAnchorId = anchor_ids[0];
 
-    this.state.disable_scroll = disable_scroll;
-
+    this.disable_scroll = disable_scroll;
     // Register component
     this.postRegister(auto_update_anchor);
     // Send styles to COI
@@ -338,8 +337,8 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
       let { changed } = mergeDeep(this.styles, override_styles);
 
       // Update disable_scroll if it has changed
-      if (disable_scroll !== this.state.disable_scroll) {
-        this.state.disable_scroll = disable_scroll;
+      if (disable_scroll !== this.disable_scroll) {
+        this.disable_scroll = disable_scroll;
         changed = true;
       }
 
