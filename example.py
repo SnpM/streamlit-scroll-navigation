@@ -9,14 +9,14 @@ anchor_icons = ["info-circle", "lightbulb", "gear", "tag", "envelope"]
 
 # 1. vertical menu in sidebar
 with st.sidebar:
-    st.subheader("Example 1")
+    st.subheader("Example 1", help="Vertical menu in sidebar")
     scroll_navbar(
         anchor_ids,
         anchor_labels=None, # Use anchor_ids as labels
         anchor_icons=anchor_icons)
 
 # 2. horizontal menu
-st.subheader("Example 2")
+st.subheader("Example 2", help="Horizontal menu")
 scroll_navbar(
         anchor_ids,
         key = "navbar2",
@@ -24,7 +24,7 @@ scroll_navbar(
         orientation="horizontal")
 
 # 3. Custom anchor labels with no icons
-st.subheader("Example 3")
+st.subheader("Example 3", help="Custom anchor labels with no icons")
 scroll_navbar(
     anchor_ids,
     key="navbar3",
@@ -38,7 +38,7 @@ scroll_navbar(
     orientation="horizontal")
 
 # 4. CSS style definitions
-st.subheader("Example 4")
+st.subheader("Example 4", help="Custom CSS styles")
 scroll_navbar(
     anchor_ids=anchor_ids,
     key="navbar4",
@@ -57,7 +57,7 @@ scroll_navbar(
     })
 
 # 5. Force anchor
-st.subheader("Example 5")
+st.subheader("Example 5", help="Programatically select an anchor")
 force_settings = None
 if st.button("Go to Settings"):
     force_settings = "Settings"
@@ -70,7 +70,7 @@ scroll_navbar(
 
 # 6. Retrieve active anchor
 with st.sidebar:
-    st.subheader("Example 6")
+    st.subheader("Example 6", help="Retrieve active anchor for other Streamlit components")
     active_anchor = scroll_navbar(
         anchor_ids,
         key="navbar6",
@@ -81,7 +81,7 @@ with st.sidebar:
 #   Disable automatic active anchor updates, instant scrolling
 #   Instant snap scrolling
 with st.sidebar:
-    st.subheader("Example 7")
+    st.subheader("Example 7", help="Instant scrolling; disable anchor tracking")
     scroll_navbar(
         anchor_ids=anchor_ids,
         key="navbar7",

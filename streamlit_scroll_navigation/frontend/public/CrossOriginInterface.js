@@ -18,6 +18,7 @@ class CrossOriginInterface {
         this.key = key;
         this.styles = null;
         this.disable_scroll = false;
+        this.updateId = 0
         window.addEventListener("message", this.handleMessage.bind(this));
     }
 
@@ -125,19 +126,25 @@ class CrossOriginInterface {
             //If new anchor found, update the component's active anchor
             if (newActiveAnchorId !== null) {
                 this.activeAnchorId = newActiveAnchorId;
-                this.postMessage('updateActiveAnchor', this.activeAnchorId);
-                console.debug('Sent new active anchor', this.activeAnchorId);
+                this.postUpdateActiveAnchor(this.activeAnchorId);
             }
         }
     }
 
+    postUpdateActiveAnchor(anchor_id) {
+        this.postMessage(
+            'updateActiveAnchor',
+            {anchor_id, update_id: this.updateId++}
+        );
+    }
+
     //Send a message to the component
-    postMessage(COMPONENT_method, anchor_id) {
+    postMessage(COMPONENT_method, data = { anchor_id = null, update_id = null} = {}) {
         if (this.component === null) {
             console.error('Component has not been registered');
             return;
         }
-        this.component.postMessage({ COMPONENT_method: COMPONENT_method, key: this.key, anchor_id }, '*');
+        this.component.postMessage({ COMPONENT_method: COMPONENT_method, key: this.key, ...data}, '*');
     }
 
     observer = new IntersectionObserver((entries) => {
@@ -149,11 +156,7 @@ class CrossOriginInterface {
                 this.anchorVisibleStates[anchorId] = false;
                 // Rerun checkBestAnchor if the active anchor is no longer visible
                 if (this.activeAnchorId === anchorId) {
-                    //run after a delay to allow for other anchors to be checked
-                    setTimeout(() => {
-                        this.checkBestAnchor();
-                    }
-                    , 0);
+                    this.checkBestAnchor();
                 }
             }
 

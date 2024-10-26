@@ -14,9 +14,12 @@ interface State {
 //This React component handles the presentation and user input of the ScrollNavigationBar
 //It interfaces with the parent window via CrossOriginInterface.js (COI)
 class ScrollNavigationBar extends StreamlitComponentBase<State> {
-  public state = { activeAnchorId: "" };
+  public state = {
+    activeAnchorId: "",
+    disable_scroll: false,};
   private disable_scroll: boolean = false;
   private mounted = false;
+  private updateId = -1;
 
   // Send message to COI
   postMessage(COI_method: string,
@@ -43,7 +46,7 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
   }
   postUpdateConfig(): void {
     let styles = this.styles;
-    let disable_scroll = this.disable_scroll;
+    let disable_scroll = this.state.disable_scroll;
     this.postMessage("updateConfig", {styles, disable_scroll} );
   }
   postScroll(anchor_id: string): void {
@@ -75,7 +78,7 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
     const { anchor_ids, auto_update_anchor, disable_scroll} = this.getCleanedArgs();
     const initialAnchorId = anchor_ids[0];
 
-    this.disable_scroll = disable_scroll;
+    this.state.disable_scroll = disable_scroll;
 
     // Register component
     this.postRegister(auto_update_anchor);
@@ -123,13 +126,30 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
 
     console.debug("handleMessage", event.data);
     if (COMPONENT_method === "updateActiveAnchor") {
-      const { anchor_id } = event.data;
-      if (anchor_id && typeof anchor_id === "string") {
-        this.setState({ activeAnchorId: anchor_id });
-
-        //Send back to Streamlit
-        Streamlit.setComponentValue(anchor_id);
+      const { anchor_id, update_id} = event.data;
+      console.debug(key, "updateActiveAnchor: ", "Received updateActiveAnchor message with anchor_id: ", anchor_id, "update_id: ", update_id);
+      //validate anchor_id and debug error if invalid
+      if (anchor_id == null || typeof anchor_id !== "string") {
+        console.error("Invalid anchor_id: anchor_id must be a string.");
+        return;
       }
+      //Validate updateId as number and debug error if invalid
+      if (update_id == null || typeof update_id !== "number") {
+        console.error("Invalid updateId: updateId must be a number.");
+        return;
+      }
+
+      //Check if the updateId is the latest
+      if (update_id > this.updateId) {
+        this.setState({ activeAnchorId: anchor_id });
+        console.debug(key, "updateActiveAnchor: ", "Updating `active` anchor to ", anchor_id);
+        this.updateId = update_id;
+      }
+      else {
+        console.debug("Ignoring updateActiveAnchor message with outdated updateId");
+      }
+      //Send back to Streamlit
+      Streamlit.setComponentValue(anchor_id);
     }
   }
 
@@ -318,8 +338,8 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
       let { changed } = mergeDeep(this.styles, override_styles);
 
       // Update disable_scroll if it has changed
-      if (disable_scroll !== this.disable_scroll) {
-        this.disable_scroll = disable_scroll;
+      if (disable_scroll !== this.state.disable_scroll) {
+        this.state.disable_scroll = disable_scroll;
         changed = true;
       }
 
