@@ -61,6 +61,9 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
       this.postMessage("updateActiveAnchor", { anchor_id });
   }
 
+  private setComponentValue(value:string) {
+    Streamlit.setComponentValue(value);
+  }
   // Handle menu item click
   private handleMenuClick = (anchorId: string) => {
     // Update active anchor for component and COI
@@ -70,7 +73,7 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
     this.postScroll(anchorId);
 
     //Send component value to Streamlit
-    Streamlit.setComponentValue(anchorId);
+    this.setComponentValue(anchorId);
   };
 
   public componentDidMount(): void {
@@ -91,7 +94,7 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
     window.addEventListener("message", this.handleMessage.bind(this));
 
     //Send component value to streamlit
-    Streamlit.setComponentValue(initialAnchorId);
+    this.setComponentValue(initialAnchorId);
     
     this.mounted = true;
   }
@@ -153,7 +156,7 @@ class ScrollNavigationBar extends StreamlitComponentBase<State> {
         console.debug("Ignoring updateActiveAnchor message with outdated updateId");
       }
       //Send back to Streamlit
-      Streamlit.setComponentValue(anchor_id);
+      this.setComponentValue(anchor_id);
     }
   }
 

@@ -2,6 +2,7 @@ import os
 import streamlit.components.v1 as components
 from typing import *
 import requests
+import streamlit as st
 
 dev_url = "http://localhost:3000"
 parent_dir = os.path.dirname(os.path.abspath(__file__))
@@ -60,6 +61,7 @@ window.parent.instantiateCrossOriginInterface('{key}');
         width=0,
     )
 
+@st.fragment
 def scroll_navbar(
     anchor_ids: Collection[str],
     key: str = 'scroll_navbar_default',
