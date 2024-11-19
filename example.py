@@ -56,6 +56,9 @@ scroll_navbar(
         }
     })
 
+import time;
+time.sleep(2)
+
 # 5. Force anchor
 st.subheader("Example 5", help="Programatically select an anchor")
 force_settings = None

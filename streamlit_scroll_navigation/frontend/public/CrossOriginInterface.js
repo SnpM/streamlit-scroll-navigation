@@ -20,7 +20,13 @@ class CrossOriginInterface {
         this.disable_scroll = false;
         this.updateId = 0
         this.enroute = false;
+        this.untrackedanchors = [];
         window.addEventListener("message", this.handleMessage.bind(this));
+
+        //Try to track untracked anchors every 200ms
+        setInterval(() => {
+            this.poll_untrackedanchors();
+        }, 200);
     }
 
     register(component, autoUpdateAnchor, emphasisStyle)     {
@@ -187,16 +193,21 @@ class CrossOriginInterface {
         for (const anchorId of anchor_ids) {
             if (this.trackedAnchors.has(anchorId)) {
                 console.debug('Anchor is already being tracked', anchorId);
-                return;
+                continue;
             }
             
             const anchor = document.getElementById(anchorId);
-
             if (!anchor) {
-                console.error('Anchor does not exist', anchorId);
-                return
+                console.warn('Anchor does not exist in document: ', anchorId, ". Queueing for later.");
+                this.untrackedanchors.push(anchorId);
+                continue
             }
             this.trackedAnchors.add(anchorId);
+
+            //If no active anchor, set this anchor as active
+            if (this.activeAnchorId === null) {
+                this.activeAnchorId = anchorId;
+            }
 
             //Insert anchor into sortedAnchors based on its position in the document
             let inserted = false;
@@ -211,13 +222,21 @@ class CrossOriginInterface {
             if (!inserted) {
                 this.sortedAnchors.push(anchorId);
             }
-            this.sortedAnchors.push(anchorId);
             
             this.observer.observe(anchor);
             console.debug('Started tracking anchor', anchorId);
         }
     }
-        
+    poll_untrackedanchors() {
+        //If there are untracked anchors, try to track them
+        if (this.untrackedanchors.length > 0) {
+            const untrackedanchors = this.untrackedanchors;
+            this.untrackedanchors = [];
+
+            this.trackAnchors(untrackedanchors);
+            console.log("ASDFASDF")
+        }
+    }
     //Handle messages from the component
     handleMessage(event) {
         const { COI_method, key} = event.data;
@@ -226,12 +245,13 @@ class CrossOriginInterface {
         if (!COI_method || !key) {
             return;
         }
+
         //Check if message is intended for this COI instance
         if (key !== this.key) {
             return;
         }
         console.debug("COI with key", key, "received message", event.data);
-        
+
         //If component is not registered, only allow registration method
         if (this.component === null) {
             if (COI_method === 'register') {

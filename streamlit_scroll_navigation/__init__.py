@@ -30,7 +30,6 @@ def inject_crossorigin_interface():
         # Load the script from dev_url
         response = requests.get(f"{dev_url}/CrossOriginInterface.js")
         content = response.text
-        pass
     
     # Run COI content in parent
     # This works because streamlit.components.v1.html() creates an iframe from same domain as the parent scope

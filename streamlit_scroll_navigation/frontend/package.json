@@ -10,7 +10,7 @@
     "streamlit-component-lib": "^2.0.0"
   },
   "scripts": {
-    "terser-build": "terser ./public/CrossOriginInterface.js --compress 'pure_funcs=[\"console.debug\"]' --mangle -o ./build/CrossOriginInterface.min.js",
+    "terser-build": "terser ./public/CrossOriginInterface.js --compress --mangle -o ./build/CrossOriginInterface.min.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
