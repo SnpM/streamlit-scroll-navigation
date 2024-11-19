@@ -60,13 +60,26 @@ window.parent.instantiateCrossOriginInterface('{key}');
         width=0,
     )
 
-@st.fragment
+class ForceAnchor:
+    anchor:str
+    def __init__(self):
+        self.anchor = None
+    
+    def push(self, anchor):
+        self.anchor = anchor
+        
+    def pop(self):
+        anchor = self.anchor
+        self.anchor = None
+        return anchor
+
+@st.fragment()
 def scroll_navbar(
     anchor_ids: Collection[str],
     key: str = 'scroll_navbar_default',
     anchor_icons: Collection[str] = None,
     anchor_labels: Collection[str] = None,
-    force_anchor: str = None,
+    force_anchor: ForceAnchor | None = None,
     orientation: Literal['vertical', 'horizontal'] = 'vertical',
     override_styles: Dict[str, str] = {},
     auto_update_anchor: bool = True,
@@ -87,9 +100,9 @@ def scroll_navbar(
             A collection of labels for each navigation button. 
             Each label corresponds to an anchor in anchor_ids.
             If None, the anchor IDs will be used. Defaults to None.
-        force_anchor (str, optional):
-            An anchor ID to force navigation to.
-            Setting this will simulate clicking on an anchor. Defaults to None.
+        force_anchor (str, ForceAnchor):
+            A ForceAnchor object to push anchors to programatically select.
+            Setting this and pushing an anchor ID will simulate clicking on an anchor. Defaults to None.
         orientation (Literal['vertical', 'horizontal'], optional):
             The orientation of the navigation bar. Defaults to 'vertical'.
         override_styles (Dict[str, str], optional):
@@ -118,12 +131,14 @@ def scroll_navbar(
     
     inject_crossorigin_interface()
     instantiate_crossorigin_interface(key)
+    # Pop the anchor string from ForceAnchor object
+    force_anchor_str = force_anchor.pop() if force_anchor else None
     component_value = _component_func(
         anchor_ids=anchor_ids,
         key=key,
         anchor_icons=anchor_icons,
         anchor_labels=anchor_labels,
-        force_anchor=force_anchor,
+        force_anchor=force_anchor_str,
         orientation=orientation,
         override_styles=override_styles,
         auto_update_anchor=auto_update_anchor,

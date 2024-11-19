@@ -56,20 +56,21 @@ scroll_navbar(
         }
     })
 
-import time;
-time.sleep(2)
-
 # 5. Force anchor
-st.subheader("Example 5", help="Programatically select an anchor")
-force_settings = None
-if st.button("Go to Settings"):
-    force_settings = "Settings"
-scroll_navbar(
-        anchor_ids,
-        key="navbar5",
-        anchor_icons=anchor_icons,
-        orientation="horizontal",
-        force_anchor=force_settings)
+st.subheader("Example 5", help="Programatically select an anchor within StreamLit fragment")
+@st.fragment
+def example5():
+    from streamlit_scroll_navigation import ForceAnchor
+    force_settings = ForceAnchor()
+    if st.button("Go to Settings"):
+        force_settings.push("Settings")
+    scroll_navbar(
+            anchor_ids,
+            key="navbar5",
+            anchor_icons=anchor_icons,
+            orientation="horizontal",
+            force_anchor=force_settings)
+example5()
 
 # 6. Retrieve active anchor
 with st.sidebar:
