@@ -79,7 +79,7 @@ def scroll_navbar(
     key: str = 'scroll_navbar_default',
     anchor_icons: Collection[str] = None,
     anchor_labels: Collection[str] = None,
-    force_anchor: ForceAnchor | None = None,
+    force_anchor: ForceAnchor = None,
     orientation: Literal['vertical', 'horizontal'] = 'vertical',
     override_styles: Dict[str, str] = {},
     auto_update_anchor: bool = True,
